@@ -655,3 +655,44 @@ textarea:focus {
     border-radius: 10px;
     border: 1px solid #3a2e66;
 }
+
+.dice-roll-section {
+    background: rgba(42, 35, 75, 0.5);
+    border: 1px dashed #8a4b9e;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.luck-dice {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin: 15px 0;
+}
+
+.dice-value {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(26, 22, 48, 0.8);
+    border-radius: 8px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #c9a86d;
+    border: 1px solid #3a2e66;
+}
+
+.luck-total {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #c9a86d;
+    margin: 15px 0;
+    padding: 10px;
+    background: rgba(26, 22, 48, 0.5);
+    border-radius: 8px;
+    border: 1px solid #3a2e66;
+}

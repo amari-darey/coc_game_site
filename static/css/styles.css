@@ -276,6 +276,97 @@ footer {
     animation: bubbleRise 15s linear infinite;
 }
 
+/* Модалка */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(10, 10, 20, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: linear-gradient(145deg, #1a1630, #2a234b);
+    border: 2px solid #8a4b9e;
+    border-radius: 15px;
+    padding: 30px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    box-shadow: 0 0 30px rgba(138, 75, 158, 0.5);
+    transform: translateY(50px);
+    transition: transform 0.4s ease;
+    text-align: center;
+}
+
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+}
+
+.modal-title {
+    font-family: 'Cinzel', serif;
+    color: #c9a86d;
+    margin-bottom: 25px;
+    font-size: 1.8rem;
+    text-shadow: 0 0 10px rgba(201, 168, 109, 0.5);
+}
+
+.modal-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+    justify-content: center;
+}
+
+.modal-button {
+    background: linear-gradient(145deg, #2a234b, #3a2e66);
+    border: 2px solid #8a4b9e;
+    color: #e8e6e3;
+    padding: 15px;
+    font-size: 1.1rem;
+    font-family: 'Cinzel', serif;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.modal-button:hover {
+    border-color: #c9a86d;
+    color: #c9a86d;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: #c9a86d;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.close-button:hover {
+    color: #e8e6e3;
+}
+
 @keyframes float {
     0%, 100% {
         transform: translateY(0) rotate(0deg);
@@ -407,6 +498,15 @@ footer {
     .button-tentacle {
         display: none;
     }
+
+    .modal-content {
+        padding: 20px;
+        width: 95%;
+    }
+    
+    .modal-title {
+        font-size: 1.5rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -448,5 +548,14 @@ footer {
 
     .button-tentacle {
         display: none;
+    }
+
+    .modal-buttons {
+        gap: 10px;
+    }
+    
+    .modal-button {
+        padding: 12px;
+        font-size: 1rem;
     }
 }

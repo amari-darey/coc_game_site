@@ -31,7 +31,7 @@
 
         <div class="buttons-container">
             <div class="button-wrapper">
-                <a href="/create" style="text-decoration: none;"><button class="main-button">Create Investigator</button></a>
+                <button class="main-button" id="createButton">Create Investigator</button>
             </div>
             <div class="button-wrapper">
                 <button class="main-button">Game</button>
@@ -42,5 +42,16 @@
     <footer>
         <p>product by Amar</p>
     </footer>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <button class="close-button" id="closeModal">&times;</button>
+            <h2 class="modal-title">Choose Creation Method</h2>
+            <div class="modal-buttons">
+                <button class="modal-button" id="fastCreate">Fast Create</button>
+                <a href="/create" style="text-decoration: none;"><button class="modal-button" id="classicCreate">Classic Create</button></a>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

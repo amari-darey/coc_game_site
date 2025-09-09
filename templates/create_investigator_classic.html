@@ -32,7 +32,7 @@
             <span class="step" data-step="2">Характеристики</span>
             <span class="step" data-step="3">Возраст</span>
             <span class="step" data-step="4">Навыки</span>
-            <span class="step" data-step="5">Снаряжение</span>
+            <span class="step" data-step="5">Удача</span>
             <span class="step" data-step="6">Внешность</span>
             <span class="step" data-step="7">Подтверждение</span>
         </div>
@@ -207,8 +207,17 @@
 
         <!-- Шаг 5: Снаряжение -->
         <div class="form-step" data-step="5">
-            <h2>Шаг 5: Снаряжение исследователя</h2>
-            {{ textarea_field("equipment", "Снаряжение", "Опишите снаряжение вашего исследователя...", 6) }}
+            <h2>Шаг 5: Определение удачи</h2>
+
+            <div class="dice-roll-section">
+                <p id="luckTryNum">Бросков удачи <strong >1</strong></p>
+                <button type="button" id="rollLuck" class="nav-btn center">
+                    Бросить кубики для определения удачи
+                </button>
+                <div id="luckRollResult" class="text-center"></div>
+            </div>
+
+            <input type="hidden" id="luckValue" name="luck" value="0">
         </div>
 
         <!-- Шаг 6: Внешность -->
@@ -217,6 +226,7 @@
             {{ textarea_field("charName", "Имя", "Твоё имя...", 1) }}
             {{ textarea_field("appearanceDesc", "Внешность", "Опишите внешность вашего исследователя...", 3) }}
             {{ textarea_field("backstory", "Предыстория", "Расскажите предысторию вашего исследователя...", 4) }}
+            {{ textarea_field("equipment", "Снаряжение", "Опишите снаряжение вашего исследователя...", 6) }}
         </div>
 
         <!-- Шаг 7: Подтверждение -->

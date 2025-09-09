@@ -1,10 +1,36 @@
 // main.js
 document.addEventListener('DOMContentLoaded', function() {
     const tentaclesContainer = document.querySelector('.tentacles-container');
+    const modalOverlay = document.getElementById('modalOverlay');
+    const createButton = document.getElementById('createButton');
+    const closeModal = document.getElementById('closeModal');
+    const fastCreateButton = document.getElementById('fastCreate');
 
     if (!tentaclesContainer) return;
 
-    // Создаем пузыри
+    createButton.addEventListener('click', openModal);
+    closeModal.addEventListener('click', closeModalHandler);
+    modalOverlay.addEventListener('click', function(e) {
+        if (e.target === modalOverlay) {
+            closeModalHandler();
+        }
+    });
+
+    fastCreateButton.addEventListener('click', function() {
+            alert('Fast Create feature will be available soon!');
+            closeModalHandler();
+        });
+
+    function openModal() {
+        modalOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModalHandler() {
+        modalOverlay.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
     function createBubble() {
         const bubble = document.createElement('div');
         bubble.className = 'bubble';
@@ -21,21 +47,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
         tentaclesContainer.appendChild(bubble);
 
-        // Удаляем пузырь после завершения анимации
         setTimeout(() => {
             bubble.remove();
         }, 30000);
     }
 
-    // Создаем несколько пузырей
     for (let i = 0; i < 10; i++) {
         setTimeout(createBubble, i * 2000);
     }
 
-    // Продолжаем создавать пузыри каждые 2 секунды
     setInterval(createBubble, 2000);
 
-    // Добавляем интерактивность кнопкам
     const buttons = document.querySelectorAll('.main-button');
     buttons.forEach(button => {
         button.addEventListener('click', function() {
@@ -46,7 +68,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
         });
 
-        // Эффект при наведении на кнопку - щупальца активнее двигаются
         button.addEventListener('mouseenter', function() {
             const tentacles = document.querySelectorAll('.button-tentacle');
             tentacles.forEach(tentacle => {
@@ -64,7 +85,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Добавляем эффект движения щупальцам при движении мыши
     document.addEventListener('mousemove', (e) => {
         const x = e.clientX / window.innerWidth;
 

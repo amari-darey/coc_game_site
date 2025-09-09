@@ -23,6 +23,12 @@ class CoCCharacterCreator {
         this.EduImprovementCurrent = 0;
         this.EduImprovementMax = 0;
 
+        // Удача
+        this.luckValue = 0;
+        this.luckTry = 1;
+        this.luckPreVal = 0;
+        this.luckFlag = false;
+
         this.bindEvents();
         this.updateUI();
     }
@@ -49,6 +55,7 @@ class CoCCharacterCreator {
         this.funcForNextBtn = () => this.nextStep()
         $("nextBtn").addEventListener("click", this.funcForNextBtn);
         $("prevBtn").addEventListener("click", () => this.prevStep());
+        $("rollLuck")?.addEventListener("click", () => this.rollLuck());
 
         // Навыки (шаг 1)
         document.querySelectorAll('input[name="skills"]').forEach(cb =>
@@ -203,6 +210,9 @@ class CoCCharacterCreator {
     }
 
     distributionNoProffesionSkill() {
+        if (this.skillPointProfessional != this.skillPointProfessionalLess) {
+                return alert("Потрате все очки профессиональных навыков")
+            }
         if (this.skillPointFlag) {
             this.disableProffesionSkill()
             const maxPoint = document.getElementById("skillPointsMax");
@@ -340,14 +350,70 @@ class CoCCharacterCreator {
         skillPointsLeft.textContent = this.skillPointProfessional - this.skillPointProfessionalLess
     }
 
+    // ================= ШАГ 5 =================
+
+    stepFive(){
+        const age = document.getElementById("ageRange")
+        if (age.value == "15_19") {
+            this.luckTry = 2
+            this.luckFlag = true
+        }
+    }
+
+    rollLuck() {
+        if (this.luckTry > 0) {
+            const dice1 = Math.floor(Math.random() * 6) + 1;
+            const dice2 = Math.floor(Math.random() * 6) + 1;
+            const dice3 = Math.floor(Math.random() * 6) + 1;
+            const total = (dice1 + dice2 + dice3) * 5;
+            
+            const resultElement = document.getElementById("luckRollResult");
+            const luckTryNum = document.querySelector("#luckTryNum strong");
+            
+            
+            resultElement.innerHTML = `
+                <div class="luck-dice">
+                    <div class="dice-value">${dice1}</div>
+                    <div class="dice-value">${dice2}</div>
+                    <div class="dice-value">${dice3}</div>
+                </div>
+                <div class="luck-total">Удача: ${total}</div>
+            `;
+            
+            this.luckValue = total;
+            document.getElementById("luckValue").value = total;
+            this.luckTry--
+            luckTryNum.textContent = this.luckTry
+
+            if (this.luckFlag)
+            {
+                if (this.luckPreVal > total) {
+                    this.luckValue = this.luckPreVal;
+                    document.getElementById("luckValue").value = this.luckPreVal;
+                    resultElement.innerHTML = `
+                        <div class="luck-dice">
+                            <div class="dice-value">${dice1}</div>
+                            <div class="dice-value">${dice2}</div>
+                            <div class="dice-value">${dice3}</div>
+                        </div>
+                        <div class="luck-total">Удача: ${total}</div>
+                        <p class="success">Прошлое значение ${this.luckPreVal} было больше, останется оно.</p>
+                    `;
+                }
+                this.luckPreVal = total
+            }
+        }
+    }
+
     // ================= ДРУГОЕ =================
     nextStep() {
-        // if (!this.validateStep()) return;  // TODO: включить в продакшене
+        if (!this.validateStep()) return;  // TODO: включить в продакшене
         this.toggleStep(false);
         this.currentStep++;
         if (this.currentStep === this.totalSteps) this.renderSummary();
         if (this.currentStep === 3) this.updateAgeStats();
         if (this.currentStep === 4) this.stepFour();
+        if (this.currentStep === 5) this.stepFive();
         this.updateProgress();
         this.toggleStep(true);
         this.updateNavButtons();
@@ -398,6 +464,18 @@ class CoCCharacterCreator {
         }
         if (this.currentStep === 2 && this.pointsLeft !== 0) {
             return alert("Распределите все очки характеристик"), false;
+        }
+        if (this.currentStep === 3 && document.getElementById('ageRange').selectedIndex === 0) {
+            return alert("Выберите возраст"), false;
+        }
+        if (this.currentStep === 3 && this.EduImprovementCurrent != this.EduImprovementMax) {
+            return alert("Пройдите проврки образования"), false;
+        }
+        if (this.currentStep === 4 && this.skillPointProfessionalLess != this.skillPointProfessional) {
+            return alert("Потратьте все очки хобби"), false;
+        }
+        if (this.currentStep === 5 && this.luckTry != 0) {
+            return alert(this.luckTry), false;
         }
         return true;
     }
@@ -537,6 +615,7 @@ class CoCCharacterCreator {
             <div><strong>Hp:</strong> ${this.getHp()}</div>
             <div><strong>Mp:</strong> ${this.getMp()}</div>
             <div><strong>Speed:</strong> ${this.getSpeed()}</div>
+            <div><strong>Luck:</strong> ${this.luckValue}</div>
             <div><strong>Damage Bonus:</strong> ${this.getDamageUp().damageBonus}</div>
             <div><strong>Damage Reduction:</strong> ${this.getDamageUp().damageReduction}</div>
             <div><strong>Формула навыков:</strong> ${form.get("skillPointFormula")}</div>
@@ -564,6 +643,7 @@ class CoCCharacterCreator {
             "hp": this.getHp(),
             "mp": this.getMp(),
             "speed": this.getSpeed(),
+            "luck": this.luckValue,
             "damageUp": this.getDamageUp().damageBonus,
             "damageReduction": this.getDamageUp().damageReduction,
         };
