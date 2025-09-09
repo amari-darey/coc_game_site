@@ -319,35 +319,36 @@ class CoCCharacterCreator {
     changeSkill(e) {
         const { skill, action } = e.target.dataset;
         const input = document.getElementById(`skill_alloc_${skill}`);
-        const skillPointsLeft = document.getElementById("skillPointsLeft")
-        const minValue = input.minValue
+        const skillPointsLeftEl = document.getElementById("skillPointsLeft");
+        const baseValue = input.minValue || 0;
+        let value = this.currentSkills[skill];
+        const pointsAvailable = this.skillPointProfessional - this.skillPointProfessionalLess;
 
-        if (action == "skillIncrease")
-        {
-            if (this.currentSkills[skill] < 90 && this.skillPointProfessionalLess < this.skillPointProfessional)
-            {
-                this.currentSkills[skill] += 1
-                this.skillPointProfessionalLess += 1
+        const ops = {
+            skillIncrease: () => {
+                if (value < 90 && pointsAvailable > 0) {
+                    value++;
+                    this.skillPointProfessionalLess++;
+                }
+            },
+            "skillIncrease+": () => {
+                const increment = Math.min(10, 90 - value, pointsAvailable);
+                value += increment;
+                this.skillPointProfessionalLess += increment;
+            },
+            skillDecrease: () => {
+                if (value > baseValue) {
+                    value--;
+                    this.skillPointProfessionalLess--;
+                }
             }
-        }
-        else if (action == "skillIncrease+")
-        {
-            if (this.currentSkills[skill] < 81 && this.skillPointProfessional - this.skillPointProfessionalLess >= 10)
-            {
-                this.currentSkills[skill] += 10
-                this.skillPointProfessionalLess += 10
-            }
-        }
-        else if (action == "skillDecrease")
-        {
-            if (this.currentSkills[skill] > 1 && this.skillPointProfessional >= this.skillPointProfessionalLess)
-            {
-                this.currentSkills[skill] -= 1
-                this.skillPointProfessionalLess -= 1
-            }
-        }
-        input.value = this.currentSkills[skill];
-        skillPointsLeft.textContent = this.skillPointProfessional - this.skillPointProfessionalLess
+        };
+
+        ops[action]?.();
+
+        this.currentSkills[skill] = value;
+        input.value = value;
+        skillPointsLeftEl.textContent = this.skillPointProfessional - this.skillPointProfessionalLess;
     }
 
     // ================= ШАГ 5 =================
