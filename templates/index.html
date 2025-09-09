@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Главная — Call of Cthulhu{% endblock %}
+
+{% block body %}
+<div class="tentacles-container">
+    <div class="tentacle tentacle-bg-1"></div>
+    <div class="tentacle tentacle-bg-2"></div>
+    <div class="tentacle tentacle-bg-3"></div>
+    <div class="tentacle tentacle-bg-4"></div>
+
+    <div class="button-tentacle tentacle tentacle-left" style="left: calc(50% - 170px);"></div>
+    <div class="button-tentacle tentacle tentacle-right" style="right: calc(50% - 170px);"></div>
+</div>
+
+<div class="container">
+    <header>
+        <h1 class="logo">CALL OF CTHULHU</h1>
+    </header>
+
+    <main class="main-content">
+        <div class="cthulhu-symbol">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 15 C30 15, 15 30, 15 50 C15 70, 30 85, 50 85 C70 85, 85 70, 85 50 C85 30, 70 15, 50 15 Z" fill="none" stroke="#8a4b9e" stroke-width="2"/>
+                <path d="M50 25 C35 25, 25 35, 25 50 C25 65, 35 75, 50 75 C65 75, 75 65, 75 50 C75 35, 65 25, 50 25 Z" fill="none" stroke="#c9a86d" stroke-width="1.5"/>
+                <circle cx="50" cy="50" r="5" fill="#3a2e66"/>
+                <path d="M40 40 L60 60 M60 40 L40 60" stroke="#c9a86d" stroke-width="1.5"/>
+                <path d="M30 50 Q50 30, 70 50 Q50 70, 30 50 Z" fill="none" stroke="#8a4b9e" stroke-width="1"/>
+            </svg>
+        </div>
+
+        <div class="buttons-container">
+            <div class="button-wrapper">
+                <a href="/create" style="text-decoration: none;"><button class="main-button">Create Investigator</button></a>
+            </div>
+            <div class="button-wrapper">
+                <button class="main-button">Game</button>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>product by Amar</p>
+    </footer>
+</div>
+{% endblock %}

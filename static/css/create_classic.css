@@ -1,0 +1,657 @@
+/* ТИПОГРАФИЯ / МЕЛКИЕ СТИЛИ */
+.subtitle {
+    font-size: 1.2rem;
+    margin-top: 10px;
+    color: #9e9ea6;
+    font-style: italic;
+    letter-spacing: 1px;
+}
+
+/* ПРОГРЕСС-БАР */
+.progress-container {
+    margin-bottom: 30px;
+    position: relative;
+    z-index: 10;
+}
+
+.progress-bar {
+    height: 8px;
+    background: #1a1630;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 16.66%;
+    background: linear-gradient(90deg, #8a4b9e, #c9a86d);
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.step {
+    padding: 8px 15px;
+    background: #1a1630;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #6b6880;
+    transition: all 0.3s ease;
+    position: relative;
+    border: 1px solid #2a234b;
+}
+.step.active {
+    background: linear-gradient(145deg, #2a234b, #1a1630);
+    color: #c9a86d;
+    transform: scale(1.05);
+    border-color: #8a4b9e;
+    box-shadow: 0 0 10px rgba(138, 75, 158, 0.5);
+}
+
+/* ФОРМА И ШАГИ */
+.character-form {
+    background: rgba(26, 22, 48, 0.8);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid #3a2e66;
+    position: relative;
+    z-index: 5;
+    backdrop-filter: blur(5px);
+}
+
+.form-step {
+    display: none;
+    animation: fadeIn 0.5s ease;
+}
+.form-step.active { display: block; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+h2 {
+    color: #c9a86d;
+    margin-bottom: 25px;
+    text-align: center;
+    font-family: 'Cinzel', serif;
+    text-shadow: 0 0 5px rgba(201, 168, 109, 0.3);
+    font-size: 1.8rem;
+}
+
+/* КАРТОЧКА ПРОФЕССИИ */
+.profession-card {
+    background: rgba(42, 35, 75, 0.5);
+    border: 1px solid #3a2e66;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 20px;
+}
+
+.card-header {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #3a2e66;
+}
+
+.card-section { display: flex; flex-direction: column; }
+
+.card-section h3 {
+    color: #8a4b9e;
+    margin-bottom: 15px;
+    font-family: 'Cinzel', serif;
+}
+
+/* ВЫБРАННЫЕ НАВЫКИ */
+.selected-skills-list {
+    margin-top: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+    background: rgba(26, 22, 48, 0.5);
+    border-radius: 5px;
+    padding: 10px;
+    border: 1px solid #3a2e66;
+}
+.selected-skill {
+    padding: 5px;
+    margin-bottom: 5px;
+    background: rgba(138, 75, 158, 0.2);
+    border-radius: 3px;
+    font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.remove-skill {
+    background: none;
+    border: none;
+    color: #ff6b6b;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* ПОЛЯ ФОРМЫ */
+.form-group { margin-bottom: 20px; }
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #c9a86d;
+}
+
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 12px 15px;
+    background: rgba(42, 35, 75, 0.5);
+    border: 1px solid #3a2e66;
+    border-radius: 8px;
+    font-size: 16px;
+    color: #e8e6e3;
+    transition: all 0.3s ease;
+}
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #8a4b9e;
+    box-shadow: 0 0 10px rgba(138, 75, 158, 0.5);
+}
+
+/* НАВЫКИ (контейнер, категории, элементы) */
+.skills-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.skill-category {
+    background: rgba(42, 35, 75, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #3a2e66;
+}
+.skill-category h3 {
+    color: #8a4b9e;
+    margin-bottom: 15px;
+    font-family: 'Cinzel', serif;
+    border-bottom: 1px solid #3a2e66;
+    padding-bottom: 10px;
+}
+
+.skill-item { margin-bottom: 12px; display: flex; align-items: center; }
+.skill-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    accent-color: #8a4b9e;
+}
+.skill-item label {
+    font-weight: normal;
+    color: #e8e6e3;
+    margin-bottom: 0;
+    cursor: pointer;
+    flex: 1;
+}
+
+/* СЧЁТЧИК */
+.counter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(42, 35, 75, 0.5);
+    border-radius: 10px;
+    border: 1px solid #3a2e66;
+}
+.counter span {
+    font-size: 18px;
+    font-weight: bold;
+    color: #c9a86d;
+    margin: 0 10px;
+}
+
+/* КНОПКИ НАВИГАЦИИ */
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+.nav-btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(145deg, #2a234b, #1a1630);
+    color: #c9a86d;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #3a2e66;
+    font-family: 'Cinzel', serif;
+}
+.nav-btn:hover {
+    background: linear-gradient(145deg, #3a2e66, #2a234b);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    color: #e8e6e3;
+}
+.nav-btn:disabled {
+    background: #1a1630;
+    color: #6b6880;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+#prevBtn {
+    background: linear-gradient(145deg, #1a1630, #2a234b);
+}
+
+/* АДАПТИВ (мобильные стили #1) */
+@media (max-width: 768px) {
+    .container { padding: 10px; }
+    .logo { font-size: 2rem; }
+
+    .progress-steps { flex-wrap: wrap; gap: 10px; }
+    .step { font-size: 10px; padding: 5px 10px; }
+
+    .profession-card { grid-template-columns: 1fr; }
+    .skills-container { grid-template-columns: 1fr; }
+
+    .navigation-buttons { flex-direction: column; gap: 10px; }
+    .nav-btn { width: 100%; }
+}
+
+/* ПОИНТЫ / ОСТАТКИ ОЧКОВ */
+.points-container {
+    background: rgba(42, 35, 75, 0.5);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+    border: 1px solid #3a2e66;
+    text-align: center;
+}
+
+.points-info {
+    margin-bottom: 15px;
+}
+
+.points-remaining {
+    font-size: 18px;
+    font-weight: bold;
+    color: #c9a86d;
+}
+
+/* СЕТКА ХАРАКТЕРИСТИК */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.stat-group {
+    background: rgba(42, 35, 75, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #3a2e66;
+    text-align: center;
+}
+
+.stat-group label {
+    display: block;
+    margin-bottom: 15px;
+    font-weight: bold;
+    color: #c9a86d;
+}
+
+.stat-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.stat-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #2a234b, #1a1630);
+    color: #c9a86d;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #3a2e66;
+}
+
+.stat-btn:hover {
+    background: linear-gradient(145deg, #3a2e66, #2a234b);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    color: #e8e6e3;
+}
+
+.stat-btn:disabled {
+    background: #1a1630;
+    color: #6b6880;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.stat-group input {
+    width: 60px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    background: rgba(26, 22, 48, 0.5);
+    border: 1px solid #3a2e66;
+    border-radius: 8px;
+    color: #e8e6e3;
+    padding: 8px;
+}
+
+.stat-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: #c9a86d;
+    text-align: center;
+    padding: 10px;
+    background: rgba(26, 22, 48, 0.5);
+    border-radius: 8px;
+    border: 1px solid #3a2e66;
+}
+
+/* EDU-улучшения / сообщения результата */
+.edu-improvement-roll {
+    margin: 10px 0;
+    padding: 10px;
+    background: rgba(26, 22, 48, 0.5);
+    border-radius: 5px;
+    border: 1px solid #3a2e66;
+}
+
+.edu-success {
+    color: #4CAF50;
+}
+
+.edu-failure {
+    color: #ff6b6b;
+}
+
+.success {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.failure {
+    color: #ff6b6b;
+    font-weight: bold;
+}
+
+/* ЗАГОЛОВКИ СЕКЦИЙ */
+.section-title {
+    color: #8a4b9e;
+    margin: 25px 0 15px;
+    font-family: 'Cinzel', serif;
+    text-align: left;
+}
+
+.highlight-title {
+    color: #c9a86d;
+    margin: 20px 0 15px;
+    font-family: 'Cinzel', serif;
+    font-size: 1.4rem;
+    text-align: center;
+}
+
+/* ИНФОРМАЦИОННЫЕ БЛОКИ */
+.info-box {
+    background: rgba(42, 35, 75, 0.5);
+    border: 1px solid #3a2e66;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    color: #e8e6e3;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* EDU-SCTION БЛОК */
+.edu-section {
+    background: rgba(42, 35, 75, 0.5);
+    border: 1px dashed #8a4b9e;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* РЕЗЮМЕ ПЕРСОНАЖА */
+.summary-box {
+    background: rgba(26, 22, 48, 0.5);
+    border: 1px solid #3a2e66;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px 0;
+    color: #e8e6e3;
+    line-height: 1.5;
+    font-size: 1rem;
+}
+
+.summary-box .placeholder-text {
+    color: #6b6880;
+    font-style: italic;
+    text-align: center;
+}
+
+/* ВЫРАВНИВАНИЕ / УТИЛИТЫ */
+.text-center { text-align: center; }
+.center { display: block; margin: 0 auto; }
+
+/* ПОПАП / МОДАЛКА */
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.popup-content {
+    background: rgba(26, 22, 48, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    border: 1px solid #3a2e66;
+    box-shadow: 0 0 30px rgba(138, 75, 158, 0.8);
+    text-align: center;
+    max-width: 500px;
+    width: 90%;
+}
+
+.popup-content h3 {
+    color: #c9a86d;
+    margin-bottom: 15px;
+    font-family: 'Cinzel', serif;
+}
+
+.popup-content p {
+    color: #e8e6e3;
+    margin-bottom: 20px;
+}
+
+.popup-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.popup-btn {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(145deg, #2a234b, #1a1630);
+    color: #c9a86d;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #3a2e66;
+    font-family: 'Cinzel', serif;
+    display: inline-block;
+    text-align: center;
+}
+
+.popup-btn:hover {
+    background: linear-gradient(145deg, #3a2e66, #2a234b);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    color: #e8e6e3;
+}
+
+.popup-btn input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.popup-btn input[type="checkbox"]:checked + span {
+    background: linear-gradient(145deg, #8a4b9e, #3a2e66);
+    color: #e8e6e3;
+    border-color: #c9a86d;
+    box-shadow: 0 0 10px rgba(201, 168, 109, 0.5);
+}
+
+.popup-btn span {
+    display: block;
+    padding: 12px 30px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .popup-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .popup-btn {
+        width: 100%;
+    }
+}
+
+.popup-btn.selected {
+    background: linear-gradient(145deg, #8a4b9e, #3a2e66);
+    color: #e8e6e3;
+    border-color: #c9a86d;
+    box-shadow: 0 0 10px rgba(201, 168, 109, 0.5);
+}
+
+.popup-btn.selected span {
+    color: #e8e6e3;
+}
+
+/* ДОПОЛНИТЕЛЬНЫЕ ПРАВИЛА ДЛЯ skill-item И STAT  */
+.skill-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    gap: 10px;
+}
+
+.skill-item label {
+    flex: 1;
+    margin-bottom: 0;
+    min-width: 120px;
+    text-align: left;
+}
+
+.stat-control {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.stat-control input {
+    width: 70px; /* Увеличиваем ширину для двухзначных чисел */
+    text-align: center;
+    margin: 0 5px;
+    padding: 8px 5px; /* Увеличиваем отступы для лучшего отображения */
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.stat-btn {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+}
+
+/* АДАПТИВ (мобильные стили #2 — дополнительные) */
+@media (max-width: 768px) {
+    .skill-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .skill-item label {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+    
+    .stat-control {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .stat-control input {
+        flex: 1;
+        max-width: 60px;
+    }
+}
+
+/* СПЕЦИФИЧНЫЕ СЕКЦИИ (skill containers 2-col) */
+.skills-container-skill {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.skill-category-skill {
+    background: rgba(42, 35, 75, 0.5);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid #3a2e66;
+}

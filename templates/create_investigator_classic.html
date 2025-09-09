@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+
+{% from "macros/forms.html" import stat_field, stat_value, textarea_field %}
+
+{% block title %}Call of Cthulhu | Классическое создание персонажа{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/create_classic.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="tentacles-container">
+    <div class="tentacle tentacle-bg-1"></div>
+    <div class="tentacle tentacle-bg-2"></div>
+    <div class="tentacle tentacle-bg-3"></div>
+    <div class="tentacle tentacle-bg-4"></div>
+</div>
+
+<div class="container">
+    <header>
+        <h1 class="logo">CALL OF CTHULHU</h1>
+        <div class="subtitle">Классическое создание исследователя</div>
+    </header>
+
+    <!-- Прогресс -->
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-steps">
+            <span class="step active" data-step="1">Профессия</span>
+            <span class="step" data-step="2">Характеристики</span>
+            <span class="step" data-step="3">Возраст</span>
+            <span class="step" data-step="4">Навыки</span>
+            <span class="step" data-step="5">Снаряжение</span>
+            <span class="step" data-step="6">Внешность</span>
+            <span class="step" data-step="7">Подтверждение</span>
+        </div>
+    </div>
+
+    <form id="characterForm" class="character-form" action="/" method="POST">
+
+        <!-- Шаг 1: Профессия -->
+        <div class="form-step active" data-step="1">
+            <h2>Шаг 1: Выбор профессии</h2>
+
+            <div class="profession-card">
+                <div class="card-header">
+                    <div class="form-group full-width">
+                        <label for="profession">Профессия:</label>
+                        <input type="text" id="profession" name="profession" required placeholder="Введите профессию вашего исследователя">
+                    </div>
+                </div>
+
+                <div class="card-section">
+                    <h3 class="section-title">8 профессиональных навыков</h3>
+                    <div class="counter">
+                        Выбрано навыков: <span id="skillsCounter">0</span> / 8
+                    </div>
+                    <div class="selected-skills-list" id="selectedSkillsList"></div>
+                </div>
+
+                <div class="card-section">
+                    <div class="form-group">
+                        <label for="creditRating">Credit Rating:</label>
+                        <select id="creditRating" name="creditRating" required>
+                            {% for money_option in context.money %}
+                            <option value="{{ money_option.id }}">{{ money_option.rus }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="skillPointFormula">Skill Point Formula:</label>
+                        <select id="skillPointFormula" name="skillPointFormula" required>
+                            {% for formula in context.skillFormula %}
+                                <option value={{formula.id}}>{{formula.rus}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <h3 class="section-title">Выберите 8 профессиональных навыков</h3>
+
+            <div class="skills-container">
+                {% for category, skills in context.skills.items() %}
+                <div class="skill-category">
+                    <h3>{{ category }}</h3>
+                    {% for skill in skills %}
+                        <div class="skill-item">
+                            <input type="checkbox" id="skill_{{ skill.id }}" name="skills" value="{{ skill.id }} " data-name="{{ skill.rus }}">
+                            <label for="skill_{{ skill.id }}">{{ skill.rus }} ({{ skill.base }})</label>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Шаг 2: Характеристики -->
+        <div class="form-step" data-step="2">
+            <h2>Шаг 2: Характеристики персонажа</h2>
+            <div class="points-container">
+                <div class="points-info">
+                    <p>Распределите <strong>290 поинтов</strong> между характеристиками</p>
+                    <div class="points-remaining">
+                        Осталось поинтов: <span id="pointsLeft">290</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-grid" id="skill_choice">
+                {% for ch in context.characteristic %}
+                    {{ stat_field(ch.id, ch.rus ~ " (" ~ ch.eng ~ ")", ch.base, ch.base, 90) }}
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Шаг 3: Возраст -->
+        <div class="form-step" data-step="3">
+            <h2>Шаг 3: Выбор возраста</h2>
+
+            <div class="form-group">
+                <label for="ageRange">Возрастная категория:</label>
+                <select id="ageRange" name="ageRange" required>
+                    <option value="">-- Выберите возраст --</option>
+                    {% for age_option in context.age %}
+                        <option value="{{ age_option.id }}">{{ age_option.rus }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div id="ageModifiersInfo" class="info-box" style="display: none;">
+                <h3 class="section-title">Модификаторы возраста</h3>
+                <div id="modifiersList"></div>
+            </div>
+
+            <h3 class="highlight-title">Текущие характеристики</h3>
+            <div class="stats-grid">
+                {% for ch in context.characteristic %}
+                    {{ stat_value(ch.rus ~ " (" ~ ch.eng ~ ")", ch.id, 0) }}
+                {% endfor %}
+            </div>
+
+            <div id="eduImprovementSection" class="edu-section" style="display: none;">
+                <h3 class="section-title">Проверка улучшения образования</h3>
+                <p>Текущее ОБР: <span id="currentEDU">15</span></p>
+                <button type="button" id="rollEduImprovement" class="nav-btn center">
+                    Бросить кубик для улучшения ОБР
+                </button>
+                <div id="eduImprovementResult" class="text-center"></div>
+            </div>
+        </div>
+
+        <!-- Шаг 4: Навыки -->
+        <div class="form-step" data-step="4">
+            <h2>Шаг 4: Распределение навыков</h2>
+            <div id="choicePopup" class="popup" style="display: none;">
+                <div class="popup-content">
+                    <h3>Выберите характеристику для формулы</h3>
+                    <p>Сила или Ловкость?</p>
+                    <div class="popup-buttons">
+                        <div class="popup-btn-container">
+                            <input class="popup-btn" type="checkbox" id="popupButton1">
+                            <label for="popupButton1" class="popup-btn-label">Сила</label>
+                        </div>
+                        <div class="popup-btn-container">
+                            <input class="popup-btn" type="checkbox" id="popupButton2">
+                            <label for="popupButton2" class="popup-btn-label">Ловкость</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="step_4_formula_wait" style="display: none;">
+                <p id="skill_formula" class="step-note">Распределите очки навыков (основа: INT × 2 + EDU × 2)</p>
+                <div class="points-container">
+                    <div class="points-info">
+                        <p id="skillPointsMax">Распределите <strong>290 поинтов</strong> между профессиональными навыками</p>
+                        <div class="points-remaining">
+                            Осталось поинтов: <span id="skillPointsLeft">290</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="skills-container-skill" id="skill_distribution">
+                    {% for category, skills in context.skills.items() %}
+                    <div class="skill-category-skill">
+                        <h3>{{ category }}</h3>
+                        {% for skill in skills %}
+                            <div class="skill-item">
+                                <label for="skill_alloc_{{ skill.id }}">{{ skill.rus }}</label>
+                                <div class="stat-control">
+                                    <button type="button" class="stat-btn" data-skill="{{ skill.id }}" data-skill-rus="{{ skill.rus }}" data-action="skillDecrease">-</button>
+                                    <input type="number" id="skill_alloc_{{ skill.id }}" name="skillsAllocation[{{ skill.id }}]"
+                                           value="{{ skill.base if skill.base is number else 0 }}" min="0" max="100" readonly>
+                                    <button type="button" class="stat-btn" data-skill="{{ skill.id }}" data-skill-rus="{{ skill.rus }}" data-action="skillIncrease">+</button>
+                                    <button type="button" class="stat-btn" data-skill="{{ skill.id }}" data-skill-rus="{{ skill.rus }}" data-action="skillIncrease+">+10</button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Шаг 5: Снаряжение -->
+        <div class="form-step" data-step="5">
+            <h2>Шаг 5: Снаряжение исследователя</h2>
+            {{ textarea_field("equipment", "Снаряжение", "Опишите снаряжение вашего исследователя...", 6) }}
+        </div>
+
+        <!-- Шаг 6: Внешность -->
+        <div class="form-step" data-step="6">
+            <h2>Шаг 6: Внешность и личные детали</h2>
+            {{ textarea_field("charName", "Имя", "Твоё имя...", 1) }}
+            {{ textarea_field("appearanceDesc", "Внешность", "Опишите внешность вашего исследователя...", 3) }}
+            {{ textarea_field("backstory", "Предыстория", "Расскажите предысторию вашего исследователя...", 4) }}
+        </div>
+
+        <!-- Шаг 7: Подтверждение -->
+        <div class="form-step" data-step="7">
+            <h2>Шаг 7: Подтверждение данных</h2>
+            <div id="summary" class="summary-box">
+                <p class="placeholder-text">Здесь будет summary вашего исследователя</p>
+            </div>
+        </div>
+
+        <!-- Кнопки навигации -->
+        <div class="navigation-buttons">
+            <button type="button" id="prevBtn" class="nav-btn">Назад</button>
+            <button type="button" id="nextBtn" class="nav-btn">Далее</button>
+            <button type="submit" id="submitBtn" class="nav-btn" style="display: none;">Завершить создание</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/create_classic.js') }}"></script>
+{% endblock %}
+
+

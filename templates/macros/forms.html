@@ -1,0 +1,25 @@
+{% macro stat_field(name, label, value, min, max) %}
+<div class="stat-group">
+    <label for="{{ name }}">{{ label }}:</label>
+    <div class="stat-controls">
+        <button type="button" class="stat-btn" data-stat="{{ name }}" data-action="decrease">-</button>
+        <input type="number" id="{{ name }}" name="{{ name }}" value="{{ value }}" min="{{ min }}" max="{{ max }}" readonly>
+        <button type="button" class="stat-btn" data-stat="{{ name }}" data-action="increase">+</button>
+        <button type="button" class="stat-btn" data-stat="{{ name }}" data-action="increase+">+10</button>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro stat_value(label, short, value) %}
+<div class="stat-group">
+    <label>{{ label }}:</label>
+    <div class="stat-value" id="ageStep{{ short }}">{{ value }}</div>
+</div>
+{% endmacro %}
+
+{% macro textarea_field(name, label, placeholder, rows=3) %}
+<div class="form-group">
+    <label for="{{ name }}">{{ label }}:</label>
+    <textarea id="{{ name }}" name="{{ name }}" rows="{{ rows }}" placeholder="{{ placeholder }}"></textarea>
+</div>
+{% endmacro %}
