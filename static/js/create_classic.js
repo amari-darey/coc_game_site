@@ -488,9 +488,13 @@ class CoCCharacterCreator {
         const eduSection = document.getElementById("eduImprovementSection");
         const modsList = document.getElementById("modifiersList");
 
+        const MIN_STAT = 1;
+        const MAX_STAT = 90;
+        const clamp = (v) => Math.min(MAX_STAT, Math.max(MIN_STAT, v));
+
         const MODIFIERS = {
             "15_19": { str: -5, siz: -5, edu: -5, text: "СИЛ -5, РАЗ -5, ОБР -5", improvement: 0 },
-            "20_39": { improvement: 1 },
+            "20_39": { improvement: 1, text: "" },
             "40_49": { str: -5, dex: -5, app: -5, edu: +5, pow: +5, text: "СИЛ -5, ЛВК -5, НАР -5; ОБР +5, МОЩ +5", improvement: 2 },
             "50_59": { str: -10, dex: -10, app: -10, edu: +10, pow: +5, text: "СИЛ -10, ЛВК -10, НАР -10; ОБР +10, МОЩ +5", improvement: 3 },
             "60_69": { str: -15, dex: -15, app: -15, edu: +15, pow: +5, text: "СИЛ -15, ЛВК -15, НАР -15; ОБР +15, МОЩ +5", improvement: 4 },
@@ -501,18 +505,32 @@ class CoCCharacterCreator {
         modifiersInfo.style.display = "block";
         modsList.innerHTML = MODIFIERS[age]?.text ? `<p>${MODIFIERS[age].text}</p>` : "";
 
+        if (!this.baseStats) {
+            this.baseStats = JSON.parse(JSON.stringify(this.currentStats));
+        }
+
+        this.currentStats = JSON.parse(JSON.stringify(this.baseStats));
+
         eduSection.style.display = ["15_19", "20_39"].includes(age) ? "none" : "block";
         if (eduSection.style.display === "block") {
             document.getElementById("currentEDU").textContent = this.currentStats.edu;
         }
 
-        for (const stat in this.currentStats) {
-            if (MODIFIERS[age]?.hasOwnProperty(stat)) {
-                this.currentStats[stat] += MODIFIERS[age][stat];
+        const mods = MODIFIERS[age];
+        if (mods) {
+            for (const key in mods) {
+                if (key === "text" || key === "improvement") continue;
+                const delta = mods[key];
+                if (typeof delta === "number" && this.currentStats.hasOwnProperty(key)) {
+                    this.currentStats[key] = clamp(this.currentStats[key] + delta);
+                }
             }
+            this.EduImprovementMax = MODIFIERS[age].improvement
+            this.EduImprovementCurrent = 0
+        } else {
+            this.EduImprovementMax = 0;
         }
 
-        this.EduImprovementMax = MODIFIERS[age].improvement;
         this.updateAgeStats();
     }
 
