@@ -471,6 +471,50 @@ textarea:focus {
 .text-center { text-align: center; }
 .center { display: block; margin: 0 auto; }
 
+#eduImprovementResult {
+    margin-top: 20px;
+    padding: 15px;
+    background: rgba(42, 35, 75, 0.5);
+    border: 1px solid #3a2e66;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+#eduImprovementResult p {
+    margin: 10px 0;
+    color: #e8e6e3;
+    font-weight: 500;
+}
+
+#eduImprovementResult .success {
+    color: #4CAF50;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+#eduImprovementResult .failure {
+    color: #ff6b6b;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(255, 107, 107, 0.3);
+}
+
+#eduImprovementResult .roll-value {
+    display: inline-block;
+    padding: 3px 8px;
+    background: rgba(26, 22, 48, 0.8);
+    border-radius: 5px;
+    border: 1px solid #3a2e66;
+    font-weight: bold;
+    color: #c9a86d;
+    margin: 0 5px;
+}
+
+#eduImprovementResult .highlight {
+    color: #c9a86d;
+    font-weight: bold;
+}
+
 /* ПОПАП / МОДАЛКА */
 .popup {
     position: fixed;

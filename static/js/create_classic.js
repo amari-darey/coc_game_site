@@ -537,6 +537,7 @@ class CoCCharacterCreator {
         this.updateAgeStats();
         document.getElementById("currentEDU").textContent = this.currentStats.edu;
         this.EduImprovementCurrent++;
+        document.getElementById("eduImprovement").textContent = this.EduImprovementMax - this.EduImprovementCurrent
     }
 
     updateAgeStats() {
@@ -544,6 +545,7 @@ class CoCCharacterCreator {
             const el = document.getElementById(`ageStep${stat}`);
             if (el) el.textContent = value;
         });
+        document.getElementById("eduImprovement").textContent = this.EduImprovementMax - this.EduImprovementCurrent
     }
 
     // ================= РАСЧЁТ СТАТОВ =================
