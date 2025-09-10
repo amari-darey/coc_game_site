@@ -597,9 +597,24 @@ class CoCCharacterCreator {
             return { damageBonus: "2d6", damageReduction: 3 };
         }
         else {
-            // Для значений вне диапазона
             return { damageBonus: 0, damageReduction: 0 };
         }
+    }
+
+    getName() {
+        return document.getElementById("charName").value
+    }
+
+    getAppearance() {
+        return document.getElementById("appearanceDesc").value
+    }
+
+    getBackstory() {
+        return document.getElementById("backstory").value
+    }
+
+    getEquipment() {
+        return document.getElementById("equipment").value
     }
 
 
@@ -610,6 +625,7 @@ class CoCCharacterCreator {
         const stats = this.currentStats;
 
         summary.innerHTML = `
+            <div><strong>Имя:</strong> ${this.getName()}</div>
             <div><strong>Профессия:</strong> ${form.get("profession")}</div>
             <div><strong>Credit Rating:</strong> ${form.get("creditRating")}</div>
             <div><strong>Sanity:</strong> ${this.getSanity()}</div>
@@ -628,6 +644,15 @@ class CoCCharacterCreator {
             <div><strong>Выбранные навыки:</strong><br>
                 ${this.selectedSkills.join(", ")}
             </div>
+            <div><strong>Внешность:</strong><br>
+                ${this.getAppearance()}
+            </div>
+            <div><strong>Инвентарь:</strong><br>
+                ${this.getEquipment()}
+            </div>
+            <div><strong>История:</strong><br>
+                ${this.getBackstory()}
+            </div>
         `;
     }
 
@@ -636,6 +661,7 @@ class CoCCharacterCreator {
         e.preventDefault(); // Всегда предотвращаем стандартную отправку
         
         const result = {
+            "name": this.getName(),
             "proffesion": document.getElementById("profession").value,
             "stat": this.currentStats,
             "skill": this.currentSkills,
@@ -647,6 +673,9 @@ class CoCCharacterCreator {
             "luck": this.luckValue,
             "damageUp": this.getDamageUp().damageBonus,
             "damageReduction": this.getDamageUp().damageReduction,
+            "appearance": this.getAppearance(),
+            "backstory": this.getBackstory(),
+            "equipment": this.getEquipment(),
         };
 
         try {
