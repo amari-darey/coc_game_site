@@ -142,6 +142,7 @@ class CoCCharacterCreator {
     // ================= НАВЫКИ =================
     toggleSkill(e) {
         const { checked, value, dataset } = e.target;
+        console.log(checked, value, dataset)
         if (checked) {
             if (this.selectedSkills.length >= this.maxSkills) {
                 e.target.checked = false;
@@ -149,7 +150,7 @@ class CoCCharacterCreator {
             }
             this.selectedSkills.push(dataset.name);
         } else {
-            this.selectedSkills = this.selectedSkills.filter(s => s !== value);
+            this.selectedSkills = this.selectedSkills.filter(s => s !== dataset.name);
         }
         document.getElementById("skillsCounter").textContent = this.selectedSkills.length;
         this.renderSelectedSkills();
