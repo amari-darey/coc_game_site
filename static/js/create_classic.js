@@ -29,6 +29,9 @@ class CoCCharacterCreator {
         this.luckPreVal = 0;
         this.luckFlag = false;
 
+        // Скорость
+        this.ageModifierSpeed = 0
+
         this.bindEvents();
         this.updateUI();
     }
@@ -203,7 +206,7 @@ class CoCCharacterCreator {
     disableProffesionSkill() {
         document.getElementById("skill_distribution").querySelectorAll('.stat-btn').forEach(btn => {
             const skillId = btn.dataset.skillRus;
-            const isEnabled = this.selectedSkills.includes(skillId);
+            var isEnabled = this.selectedSkills.includes(skillId);
             if (skillId != 'Средства') isEnabled = true;
 
             btn.disabled = isEnabled;
@@ -496,14 +499,16 @@ class CoCCharacterCreator {
         const clamp = (v) => Math.min(MAX_STAT, Math.max(MIN_STAT, v));
 
         const MODIFIERS = {
-            "15_19": { str: -5, siz: -5, edu: -5, text: "СИЛ -5, РАЗ -5, ОБР -5", improvement: 0 },
-            "20_39": { improvement: 1, text: "" },
-            "40_49": { str: -5, dex: -5, app: -5, edu: +5, pow: +5, text: "СИЛ -5, ЛВК -5, НАР -5; ОБР +5, МОЩ +5", improvement: 2 },
-            "50_59": { str: -10, dex: -10, app: -10, edu: +10, pow: +5, text: "СИЛ -10, ЛВК -10, НАР -10; ОБР +10, МОЩ +5", improvement: 3 },
-            "60_69": { str: -15, dex: -15, app: -15, edu: +15, pow: +5, text: "СИЛ -15, ЛВК -15, НАР -15; ОБР +15, МОЩ +5", improvement: 4 },
-            "70_79": { str: -20, dex: -20, app: -20, edu: +20, pow: +5, text: "СИЛ -20, ЛВК -20, НАР -20; ОБР +20, МОЩ +5", improvement: 4 },
-            "80_plus": { str: -25, dex: -25, app: -25, edu: +25, pow: +5, text: "СИЛ -25, ЛВК -25, НАР -25; ОБР +25, МОЩ +5", improvement: 4 }
+            "15_19": { str: -5, siz: -5, edu: -5, text: "СИЛ -5, РАЗ -5, ОБР -5", improvement: 0, speed: 0 },
+            "20_39": { improvement: 1, text: "", improvement: 0, speed: 0 },
+            "40_49": { str: -5, dex: -5, app: -5, edu: +5, pow: +5, text: "СИЛ -5, ЛВК -5, НАР -5; ОБР +5, МОЩ +5", improvement: 2, speed: -2 },
+            "50_59": { str: -10, dex: -10, app: -10, edu: +10, pow: +5, text: "СИЛ -10, ЛВК -10, НАР -10; ОБР +10, МОЩ +5", improvement: 3, speed: -2 },
+            "60_69": { str: -15, dex: -15, app: -15, edu: +15, pow: +5, text: "СИЛ -15, ЛВК -15, НАР -15; ОБР +15, МОЩ +5", improvement: 4, speed: -3 },
+            "70_79": { str: -20, dex: -20, app: -20, edu: +20, pow: +5, text: "СИЛ -20, ЛВК -20, НАР -20; ОБР +20, МОЩ +5", improvement: 4, speed: -4 },
+            "80_plus": { str: -25, dex: -25, app: -25, edu: +25, pow: +5, text: "СИЛ -25, ЛВК -25, НАР -25; ОБР +25, МОЩ +5", improvement: 4, speed: -5 }
         };
+
+        this.ageModifierSpeed = MODIFIERS[age].speed
 
         modifiersInfo.style.display = "block";
         modsList.innerHTML = MODIFIERS[age]?.text ? `<p>${MODIFIERS[age].text}</p>` : "";
@@ -586,15 +591,15 @@ class CoCCharacterCreator {
     getSpeed(){
         if (this.currentStats["dex"] > this.currentStats["con"] && this.currentStats["str"] > this.currentStats["con"])
             {
-                return 9
+                return 9 - this.ageModifierSpeed
             }
         else if (this.currentStats["dex"] >= this.currentStats["con"] || this.currentStats["str"] >= this.currentStats["con"])
         {
-            return 8
+            return 8 - this.ageModifierSpeed
         }
         else if (this.currentStats["dex"] < this.currentStats["con"] || this.currentStats["str"] < this.currentStats["con"])
         {
-            return 7
+            return 7 - this.ageModifierSpeed
         }
     }
 
