@@ -73,6 +73,10 @@ class CoCCharacterCreator {
         // Возраст (шаг 3)
         $("ageRange").addEventListener("change", e => this.handleAgeChange(e));
         $("rollEduImprovement")?.addEventListener("click", () => this.rollEduImprovement());
+        document.querySelectorAll('#agePenaltyPopup .stat-btn').forEach(btn => {
+            btn.addEventListener('click', e => this.changeAgePenalty(e));
+        });
+        document.getElementById("applyAgePenalty").addEventListener("click", () => this.applyAgePenalty());
 
         // Шаг 4 (модальное окно)
         ["popupButton1", "popupButton2"].forEach(id =>
@@ -131,7 +135,7 @@ class CoCCharacterCreator {
     }
 
     updateStatButtons() {
-        document.querySelectorAll(".stat-btn").forEach(btn => {
+        document.querySelectorAll(".stat-btn:not(.penalty-btn)").forEach(btn => {
             const { stat, action } = btn.dataset;
             const value = this.currentStats[stat];
             const minValue = ["size", "intelligence"].includes(stat) ? 40 : 15;
@@ -194,8 +198,7 @@ class CoCCharacterCreator {
     disableNoProffesionSkill() {
         document.getElementById("skill_distribution").querySelectorAll('.stat-btn').forEach(btn => {
             const skillId = btn.dataset.skillRus;
-            var isEnabled = this.selectedSkills.includes(skillId);
-            if (skillId == 'Средства') isEnabled = true;
+            var isEnabled = this.selectedSkills.includes(skillId) || skillId === 'Средства';
 
             btn.disabled = !isEnabled;
             btn.style.opacity = isEnabled ? '1' : '0.5';
@@ -206,12 +209,11 @@ class CoCCharacterCreator {
     disableProffesionSkill() {
         document.getElementById("skill_distribution").querySelectorAll('.stat-btn').forEach(btn => {
             const skillId = btn.dataset.skillRus;
-            var isEnabled = this.selectedSkills.includes(skillId);
-            if (skillId != 'Средства') isEnabled = true;
+            var isEnabled = !this.selectedSkills.includes(skillId) && skillId !== 'Средства';
 
-            btn.disabled = isEnabled;
-            btn.style.opacity = isEnabled ? '0.5' : '1';
-            btn.style.cursor = isEnabled ? 'not-allowed' : 'pointer';
+            btn.disabled = !isEnabled;
+            btn.style.opacity = isEnabled ? '1' : '0.5';
+            btn.style.cursor = isEnabled ? 'pointer' : 'not-allowed';
         });
     }
 
@@ -499,48 +501,117 @@ class CoCCharacterCreator {
         const clamp = (v) => Math.min(MAX_STAT, Math.max(MIN_STAT, v));
 
         const MODIFIERS = {
-            "15_19": { str: -5, siz: -5, edu: -5, text: "СИЛ -5, РАЗ -5, ОБР -5", improvement: 0, speed: 0 },
-            "20_39": { improvement: 1, text: "", improvement: 0, speed: 0 },
-            "40_49": { str: -5, dex: -5, app: -5, edu: +5, pow: +5, text: "СИЛ -5, ЛВК -5, НАР -5; ОБР +5, МОЩ +5", improvement: 2, speed: -2 },
-            "50_59": { str: -10, dex: -10, app: -10, edu: +10, pow: +5, text: "СИЛ -10, ЛВК -10, НАР -10; ОБР +10, МОЩ +5", improvement: 3, speed: -2 },
-            "60_69": { str: -15, dex: -15, app: -15, edu: +15, pow: +5, text: "СИЛ -15, ЛВК -15, НАР -15; ОБР +15, МОЩ +5", improvement: 4, speed: -3 },
-            "70_79": { str: -20, dex: -20, app: -20, edu: +20, pow: +5, text: "СИЛ -20, ЛВК -20, НАР -20; ОБР +20, МОЩ +5", improvement: 4, speed: -4 },
-            "80_plus": { str: -25, dex: -25, app: -25, edu: +25, pow: +5, text: "СИЛ -25, ЛВК -25, НАР -25; ОБР +25, МОЩ +5", improvement: 4, speed: -5 }
+            "15_19":  { penalties: 5,  siz: -5, edu: -5, text: "СИЛ/ЛВК/ВЫН -5 всего, РАЗ -5, ОБР -5", improvement: 0, speed: 0 },
+            "20_39":  { penalties: 0,  text: "", improvement: 0, speed: 0 },
+            "40_49":  { penalties: 5,  edu: +5, pow: +5, text: "СИЛ/ЛВК/ВЫН -5 всего; ОБР +5, МОЩ +5", improvement: 2, speed: -2 },
+            "50_59":  { penalties: 10, edu: +10, pow: +5, text: "СИЛ/ЛВК/ВЫН -10 всего; ОБР +10, МОЩ +5", improvement: 3, speed: -2 },
+            "60_69":  { penalties: 20, edu: +15, pow: +5, text: "СИЛ/ЛВК/ВЫН -20 всего; ОБР +15, МОЩ +5", improvement: 4, speed: -3 },
+            "70_79":  { penalties: 40, edu: +20, pow: +5, text: "СИЛ/ЛВК/ВЫН -40 всего; ОБР +20, МОЩ +5", improvement: 4, speed: -4 },
+            "80_plus":{ penalties: 80, edu: +25, pow: +5, text: "СИЛ/ЛВК/ВЫН -80 всего; ОБР +25, МОЩ +5", improvement: 4, speed: -5 }
         };
 
-        this.ageModifierSpeed = MODIFIERS[age].speed
+        const mods = MODIFIERS[age];
+        this.ageModifierSpeed = mods?.speed || 0;
 
         modifiersInfo.style.display = "block";
-        modsList.innerHTML = MODIFIERS[age]?.text ? `<p>${MODIFIERS[age].text}</p>` : "";
+        modsList.innerHTML = mods?.text ? `<p>${mods.text}</p>` : "";
 
+        // Создаём snapshot исходных характеристик, если его ещё нет
         if (!this.baseStats) {
             this.baseStats = JSON.parse(JSON.stringify(this.currentStats));
         }
 
+        // Сбрасываем текущие характеристики к базовым
         this.currentStats = JSON.parse(JSON.stringify(this.baseStats));
 
+        // Сбрасываем старые штрафы
+        this.agePenalties = { str: 0, dex: 0, con: 0 };
+
+        // EDU улучшение — показать/скрыть
         eduSection.style.display = ["15_19", "20_39"].includes(age) ? "none" : "block";
         if (eduSection.style.display === "block") {
             document.getElementById("currentEDU").textContent = this.currentStats.edu;
         }
 
-        const mods = MODIFIERS[age];
+        // Применяем фиксированные бонусы возраста (кроме str/dex/con)
         if (mods) {
             for (const key in mods) {
-                if (key === "text" || key === "improvement") continue;
+                if (["text", "improvement", "speed", "penalties"].includes(key)) continue;
                 const delta = mods[key];
                 if (typeof delta === "number" && this.currentStats.hasOwnProperty(key)) {
                     this.currentStats[key] = clamp(this.currentStats[key] + delta);
                 }
             }
-            this.EduImprovementMax = MODIFIERS[age].improvement
-            this.EduImprovementCurrent = 0
+            this.EduImprovementMax = mods.improvement || 0;
+            this.EduImprovementCurrent = 0;
         } else {
             this.EduImprovementMax = 0;
         }
 
+        // Если есть штрафы — показываем модальное окно распределения
+        this.currentAgePenaltyTotal = mods?.penalties || 0;
+        if (this.currentAgePenaltyTotal > 0) {
+            document.getElementById("agePenaltyTotal").textContent = this.currentAgePenaltyTotal;
+            document.getElementById("agePenaltyRemaining").textContent = this.currentAgePenaltyTotal;
+
+            document.getElementById("penalty_str").value = 0;
+            document.getElementById("penalty_dex").value = 0;
+            document.getElementById("penalty_con").value = 0;
+
+            document.getElementById("agePenaltyPopup").style.display = "flex";
+        }
+
         this.updateAgeStats();
     }
+
+    applyAgePenalty() {
+        const total = this.currentAgePenaltyTotal;
+        const s = parseInt(document.getElementById("penalty_str").value);
+        const d = parseInt(document.getElementById("penalty_dex").value);
+        const c = parseInt(document.getElementById("penalty_con").value);
+
+        if (s + d + c !== total) {
+            alert("Нужно распределить все штрафные очки!");
+            return;
+        }
+
+        const clamp = v => Math.max(1, v);
+
+        this.currentStats.str = clamp(this.currentStats.str - s);
+        this.currentStats.dex = clamp(this.currentStats.dex - d);
+        this.currentStats.con = clamp(this.currentStats.con - c);
+
+        this.agePenalties = { str: s, dex: d, con: c }; // сохраним
+        document.getElementById("agePenaltyPopup").style.display = "none";
+        this.updateAgeStats();
+    }
+
+    changeAgePenalty(e) {
+        const { stat, action } = e.target.dataset; // stat = penalty_str / penalty_dex / penalty_con
+        const input = document.getElementById(stat);
+        let value = parseInt(input.value);
+        const used = 
+            parseInt(document.getElementById("penalty_str").value) +
+            parseInt(document.getElementById("penalty_dex").value) +
+            parseInt(document.getElementById("penalty_con").value);
+
+        if (action === "increase" && used < this.currentAgePenaltyTotal) {
+            value++;
+        } else if (action === "decrease" && value > 0) {
+            value--;
+        }
+
+        input.value = value;
+
+        const newUsed = 
+            parseInt(document.getElementById("penalty_str").value) +
+            parseInt(document.getElementById("penalty_dex").value) +
+            parseInt(document.getElementById("penalty_con").value);
+
+        document.getElementById("agePenaltyRemaining").textContent = this.currentAgePenaltyTotal - newUsed;
+    }
+
+
 
     rollEduImprovement() {
         if (this.EduImprovementCurrent >= this.EduImprovementMax) return;

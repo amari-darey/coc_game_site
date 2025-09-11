@@ -155,6 +155,24 @@
                 <div id="eduImprovementResult" class="text-center"></div>
             </div>
         </div>
+        <div id="agePenaltyPopup" class="popup" style="display:none;">
+          <div class="popup-content">
+            <h3>Распределите возрастной штраф</h3>
+            <p>Вам нужно распределить <span id="agePenaltyTotal"></span> штрафных очков между СИЛ, ЛВК и ВЫН</p>
+
+            <div class="penalty-fields">
+              {{ stat_field("penalty_str", "Сила (STR)", 0, 0, 0, "stat-btn penalty-btn") }}
+              {{ stat_field("penalty_dex", "Ловкость (DEX)", 0, 0, 0, "stat-btn penalty-btn") }}
+              {{ stat_field("penalty_con", "Выносливость (CON)", 0, 0, 0, "stat-btn penalty-btn") }}
+            </div>
+
+            <p>Осталось распределить: <span id="agePenaltyRemaining"></span></p>
+
+            <div class="popup-buttons">
+              <button type="button" id="applyAgePenalty" class="popup-btn">Применить штрафы</button>
+            </div>
+          </div>
+        </div>
 
         <!-- Шаг 4: Навыки -->
         <div class="form-step" data-step="4">
