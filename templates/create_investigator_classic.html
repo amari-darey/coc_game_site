@@ -85,6 +85,7 @@
 
             <div class="skills-container">
                 {% for category, skills in context.skills.items() %}
+                {% if category not in ['Мифы Ктулху', 'Финансы'] %}
                 <div class="skill-category">
                     <h3>{{ category }}</h3>
                     {% for skill in skills %}
@@ -94,6 +95,7 @@
                         </div>
                     {% endfor %}
                 </div>
+                {% endif %}
                 {% endfor %}
             </div>
         </div>

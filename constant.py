@@ -29,6 +29,8 @@ SKILLS = {
         {"id": "occult", "rus": "Оккультизм", "base": 5},
         {"id": "appraise", "rus": "Оценка", "base": 5},
         {"id": "law", "rus": "Юриспруденция", "base": 5},
+    ],
+    "Мифы Ктулху" : [
         {"id": "cthulhu_mythos", "rus": "Мифы Ктулху", "base": 0},
     ],
     "Социальные": [
@@ -60,6 +62,9 @@ SKILLS = {
         {"id": "swim", "rus": "Плавание", "base": 20},
         {"id": "jump", "rus": "Прыжки", "base": 20},
         {"id": "operate_heavy_machinery", "rus": "Упр. тяж. машинами", "base": 1},
+    ],
+    "Финансы": [
+        {"id": "money", "rus": "Средства", "base": 0},
     ],
 }
 

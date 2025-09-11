@@ -191,7 +191,8 @@ class CoCCharacterCreator {
     disableNoProffesionSkill() {
         document.getElementById("skill_distribution").querySelectorAll('.stat-btn').forEach(btn => {
             const skillId = btn.dataset.skillRus;
-            const isEnabled = this.selectedSkills.includes(skillId);
+            var isEnabled = this.selectedSkills.includes(skillId);
+            if (skillId == 'Средства') isEnabled = true;
 
             btn.disabled = !isEnabled;
             btn.style.opacity = isEnabled ? '1' : '0.5';
@@ -203,6 +204,7 @@ class CoCCharacterCreator {
         document.getElementById("skill_distribution").querySelectorAll('.stat-btn').forEach(btn => {
             const skillId = btn.dataset.skillRus;
             const isEnabled = this.selectedSkills.includes(skillId);
+            if (skillId != 'Средства') isEnabled = true;
 
             btn.disabled = isEnabled;
             btn.style.opacity = isEnabled ? '0.5' : '1';

@@ -118,6 +118,15 @@ h2 {
     font-family: 'Cinzel', serif;
 }
 
+.full-width {
+    width: 100%;
+}
+
+.full-width input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
 /* ВЫБРАННЫЕ НАВЫКИ */
 .selected-skills-list {
     margin-top: 10px;
