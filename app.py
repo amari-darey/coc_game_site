@@ -1,15 +1,13 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, session
+from character import Character
 from constant import *
 
 
 app = Flask(__name__)
-
+app.secret_key = 'your-secret-key'
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    if request.method == "POST":
-        for k, v in request.get_json().items():
-            print(k, v)
     return render_template("index.html")
 
 
@@ -23,6 +21,18 @@ def create():
         "skillFormula": SKILL_FORMULA,
     }
     return render_template("create_investigator_classic.html", context=context)
+
+@app.route("/character", methods=["GET", "POST"])
+def character():
+    if request.method == "POST":
+        char_data = Character(request.get_json())
+        session['character_data'] = char_data.get_all_stats()
+    context = session.get('character_data')
+    return render_template('character_sheet.html', 
+                         context=context,
+                         editable=True,
+                         SKILLS=SKILLS,
+                         CHARACTERISTICS=CHARACTERISTICS)
 
 
 if __name__ == "__main__":

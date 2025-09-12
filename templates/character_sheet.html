@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+
+{% block title %}Call of Cthulhu | Лист персонажа{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/character_sheet.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="tentacles-container">
+    <div class="tentacle tentacle-bg-1"></div>
+    <div class="tentacle tentacle-bg-2"></div>
+    <div class="tentacle tentacle-bg-3"></div>
+    <div class="tentacle tentacle-bg-4"></div>
+</div>
+
+<div class="container character-sheet-container">
+    <header>
+        <h1 class="logo">CALL OF CTHULHU</h1>
+        <div class="subtitle">Лист исследователя</div>
+    </header>
+
+    <!-- Основная информация -->
+    <div class="character-info-section">
+        <div class="info-grid">
+            <div class="info-item">
+                <label>Имя</label>
+                <div class="info-value" id="character-name">{{ context.name if context else '' }}</div>
+            </div>
+            <div class="info-item">
+                <label>Профессия</label>
+                <div class="info-value" id="character-profession">{{ context.proffesion if context else '' }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Все характеристики -->
+    <div class="section full-characteristics">
+        <h2 class="section-title">Характеристики</h2>
+
+        <!-- Первая линия -->
+        <div class="line-one">
+            <div class="characteristics-left">
+                <div class="main-characteristics-grid">
+                    {% for ch in CHARACTERISTICS %}
+                    {% set value = context.stat[ch.id] if context and context.stat and ch.id in context.stat else ch.base %}
+                    <div class="characteristic-item">
+                        <label>{{ ch.rus }} ({{ ch.eng }})</label>
+                        <div class="characteristic-main-value">
+                            <div class="main-square">{{ value }}</div>
+                            <div class="sub-squares">
+                                <div class="sub-square top">{{ (value / 2)|int }}</div>
+                                <div class="sub-square bottom">{{ (value / 5)|int }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- бонусы -->
+                <div class="characteristics-bonuses">
+                    <div class="bonus-item">
+                        <label>Бонус к урону</label>
+                        <div class="bonus-value">{{ context.damageUp if context else "0" }}</div>
+                    </div>
+                    <div class="bonus-item">
+                        <label>Скорость</label>
+                        <div class="bonus-value">{{ context.speed if context else "0" }}</div>
+                    </div>
+                    <div class="bonus-item">
+                        <label>Уменьшение урона</label>
+                        <div class="bonus-value">{{ context.damageReduction if context else "0" }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- здоровье и мп -->
+            <div class="characteristics-right">
+                <div class="track-block">
+                    <label>Здоровье</label>
+                    <div class="track-grid hp-grid">
+                        {% for i in range(0,21) %}
+                        <div class="track-cell {% if i == context.hp %}active{% endif %}">{{ i }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="track-block">
+                    <label>Пункты магии</label>
+                    <div class="track-grid mp-grid">
+                        {% for i in range(0,25) %}
+                        <div class="track-cell {% if i == context.mp %}active{% endif %}">{{ i }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вторая линия -->
+        <div class="line-two">
+            <div class="track-block">
+                <label>Удача</label>
+                <div class="track-grid">
+                    {% for i in range(0,100) %}
+                    <div class="track-cell {% if i == context.luck %}active{% endif %}">{{ i }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="track-block">
+                <label>Рассудок</label>
+                <div class="track-grid">
+                    {% for i in range(0,100) %}
+                    <div class="track-cell {% if i == context.sanity %}active{% endif %}">{{ i }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Навыки -->
+    <div class="section skills-section">
+        <h2 class="section-title">Навыки</h2>
+        <div class="skills-container">
+            {% for category, skills_list in SKILLS.items() %}
+            <div class="skill-category">
+                <h3 class="skill-category-title">{{ category }}</h3>
+                <div class="skills-grid">
+                    {% for skill in skills_list %}
+                    {% set base_value = skill.base if skill.base is number else 0 %}
+                    {% set value = context.skill[skill.id] if context and context.skill and skill.id in context.skill else base_value %}
+                    <div class="skill-item">
+                        <label for="skill-{{ skill.id }}">{{ skill.rus }}</label>
+                        <div class="skill-main-value">
+                            <div class="main-square">{{ value }}</div>
+                            <div class="sub-squares">
+                                <div class="sub-square top">{{ (value / 2)|int }}</div>
+                                <div class="sub-square bottom">{{ (value / 5)|int }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Профессиональные навыки -->
+    {% if context and context.proffesionalSkill %}
+    <div class="section professional-skills-section">
+        <h2 class="section-title">Профессиональные навыки</h2>
+        <div class="professional-skills-grid">
+            {% for skill_name in context.proffesionalSkill %}
+            <div class="professional-skill-item">
+                <div class="professional-skill-name">{{ skill_name }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Дополнительные разделы -->
+    <div class="section additional-sections">
+        <div class="additional-section">
+            <h3 class="section-subtitle">Внешность</h3>
+            <div class="text-content" id="character-appearance">
+                {{ context.appearance if context else '' }}
+            </div>
+        </div>
+
+        <div class="additional-section">
+            <h3 class="section-subtitle">Биография</h3>
+            <div class="text-content" id="character-backstory">
+                {{ context.backstory if context else '' }}
+            </div>
+        </div>
+
+        <div class="additional-section">
+            <h3 class="section-subtitle">Снаряжение и имущество</h3>
+            <div class="text-content" id="character-equipment">
+                {{ context.equipment if context else '' }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Оружие -->
+    <div class="section weapons-section">
+        <h2 class="section-title">Оружие</h2>
+        <div class="weapons-container" id="weapons-container">
+            {% if context and context.weapons %}
+                {% for weapon in context.weapons %}
+                <div class="weapon-card" data-weapon-id="{{ weapon.id }}">
+                    <div class="weapon-fields-row">
+                        <div class="weapon-field">
+                            <label>Оружие</label>
+                            <div class="weapon-value">{{ weapon.name }}</div>
+                        </div>
+                        <div class="weapon-field">
+                            <label>Навык</label>
+                            <div class="weapon-value">{{ weapon.skill }}</div>
+                        </div>
+                        <div class="weapon-field">
+                            <label>Урон</label>
+                            <div class="weapon-value">{{ weapon.damage }}</div>
+                        </div>
+                        <div class="weapon-field">
+                            <label>Дистанция</label>
+                            <div class="weapon-value">{{ weapon.distance }}</div>
+                        </div>
+                        <div class="weapon-field">
+                            <label>Атак/раунд</label>
+                            <div class="weapon-value">{{ weapon.fire_rate }}</div>
+                        </div>
+                        <div class="weapon-field">
+                            <label>Боезапас</label>
+                            <div class="weapon-value">{{ weapon.ammo }}</div>
+                        </div>
+                        <div class="weapon-field">
+                            <label>Осечка</label>
+                            <div class="weapon-value">{{ weapon.misfire }}</div>
+                        </div>
+                    </div>
+                    <button class="weapon-delete-btn" data-weapon-id="{{ weapon.id }}">×</button>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="no-weapons">Оружие не добавлено</div>
+            {% endif %}
+        </div>
+        <button class="add-weapon-btn" id="add-weapon-btn">
+            <span>+</span> Добавить оружие
+        </button>
+    </div>
+
+    {% if editable %}
+    <div class="action-buttons">
+        <button class="nav-btn" id="save-character">Сохранить</button>
+        <button class="nav-btn" id="return-to-main">На главную</button>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/character_sheet.js') }}"></script>
+{% endblock %}
+

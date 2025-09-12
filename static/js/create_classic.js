@@ -580,13 +580,13 @@ class CoCCharacterCreator {
         const clamp = (value) => Math.min(MAX_STAT, Math.max(MIN_STAT, value));
 
         const AGE_MODIFIERS = {
-            "15_19":  { penalties: 5,  siz: -5, edu: -5, text: "СИЛ/ЛВК/ВЫН -5 всего, РАЗ -5, ОБР -5", improvement: 0, speed: 0 },
+            "15_19":  { penalties: 5,  siz: -5, edu: -5, text: "СИЛ/ЛВК/ТЕЛ -5 всего, РАЗ -5, ОБР -5", improvement: 0, speed: 0 },
             "20_39":  { penalties: 0,  text: "", improvement: 0, speed: 0 },
-            "40_49":  { penalties: 5,  edu: +5, pow: +5, text: "СИЛ/ЛВК/ВЫН -5 всего; ОБР +5, МОЩ +5", improvement: 2, speed: -2 },
-            "50_59":  { penalties: 10, edu: +10, pow: +5, text: "СИЛ/ЛВК/ВЫН -10 всего; ОБР +10, МОЩ +5", improvement: 3, speed: -2 },
-            "60_69":  { penalties: 20, edu: +15, pow: +5, text: "СИЛ/ЛВК/ВЫН -20 всего; ОБР +15, МОЩ +5", improvement: 4, speed: -3 },
-            "70_79":  { penalties: 40, edu: +20, pow: +5, text: "СИЛ/ЛВК/ВЫН -40 всего; ОБР +20, МОЩ +5", improvement: 4, speed: -4 },
-            "80_plus":{ penalties: 80, edu: +25, pow: +5, text: "СИЛ/ЛВК/ВЫН -80 всего; ОБР +25, МОЩ +5", improvement: 4, speed: -5 }
+            "40_49":  { penalties: 5,  edu: +5, pow: +5, text: "СИЛ/ЛВК/ТЕЛ -5 всего; ОБР +5, МОЩ +5", improvement: 2, speed: -2 },
+            "50_59":  { penalties: 10, edu: +10, pow: +5, text: "СИЛ/ЛВК/ТЕЛ -10 всего; ОБР +10, МОЩ +5", improvement: 3, speed: -2 },
+            "60_69":  { penalties: 20, edu: +15, pow: +5, text: "СИЛ/ЛВК/ТЕЛ -20 всего; ОБР +15, МОЩ +5", improvement: 4, speed: -3 },
+            "70_79":  { penalties: 40, edu: +20, pow: +5, text: "СИЛ/ЛВК/ТЕЛ -40 всего; ОБР +20, МОЩ +5", improvement: 4, speed: -4 },
+            "80_plus":{ penalties: 80, edu: +25, pow: +5, text: "СИЛ/ЛВК/ТЕЛ -80 всего; ОБР +25, МОЩ +5", improvement: 4, speed: -5 }
         };
 
         const modifiers = AGE_MODIFIERS[age];
@@ -844,7 +844,7 @@ class CoCCharacterCreator {
         };
 
         try {
-            const response = await fetch('http://127.0.0.1:5100/', {
+            const response = await fetch('http://127.0.0.1:5100/character', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -853,7 +853,7 @@ class CoCCharacterCreator {
             });
 
             if (response.ok) {
-                window.location.href = '/';
+                window.location.href = '/character';
             } else {
                 console.error('Ошибка сервера:', response.status);
             }
