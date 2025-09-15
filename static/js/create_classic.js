@@ -7,7 +7,7 @@ class CoCCharacterCreator {
 
     _initializeProperties() {
         this.currentStep = 1;
-        this.totalSteps = 7;
+        this.totalSteps = 6;
 
         // Навыки
         this.selectedSkills = [];
@@ -481,7 +481,6 @@ class CoCCharacterCreator {
         this._toggleCurrentStep(false);
         this.currentStep++;
         
-        if (this.currentStep === this.totalSteps) this._renderSummary();
         if (this.currentStep === 3) this._updateAgeStats();
         if (this.currentStep === 4) this._handleStepFour();
         if (this.currentStep === 5) this._handleStepFive();
@@ -582,11 +581,11 @@ class CoCCharacterCreator {
         const AGE_MODIFIERS = {
             "15_19":  { penalties: 5,  siz: -5, edu: -5, text: "СИЛ/ЛВК/ТЕЛ -5 всего, РАЗ -5, ОБР -5", improvement: 0, speed: 0 },
             "20_39":  { penalties: 0,  text: "", improvement: 0, speed: 0 },
-            "40_49":  { penalties: 5,  edu: +5, pow: +5, text: "СИЛ/ЛВК/ТЕЛ -5 всего; ОБР +5, МОЩ +5", improvement: 2, speed: -2 },
-            "50_59":  { penalties: 10, edu: +10, pow: +5, text: "СИЛ/ЛВК/ТЕЛ -10 всего; ОБР +10, МОЩ +5", improvement: 3, speed: -2 },
-            "60_69":  { penalties: 20, edu: +15, pow: +5, text: "СИЛ/ЛВК/ТЕЛ -20 всего; ОБР +15, МОЩ +5", improvement: 4, speed: -3 },
-            "70_79":  { penalties: 40, edu: +20, pow: +5, text: "СИЛ/ЛВК/ТЕЛ -40 всего; ОБР +20, МОЩ +5", improvement: 4, speed: -4 },
-            "80_plus":{ penalties: 80, edu: +25, pow: +5, text: "СИЛ/ЛВК/ТЕЛ -80 всего; ОБР +25, МОЩ +5", improvement: 4, speed: -5 }
+            "40_49":  { penalties: 5,  edu: +5, pow: +5, text: "СИЛ/ЛВК/ТЕЛ -5 всего; ОБР +5, МОЩ +5", improvement: 2, speed: 2 },
+            "50_59":  { penalties: 10, edu: +10, pow: +5, text: "СИЛ/ЛВК/ТЕЛ -10 всего; ОБР +10, МОЩ +5", improvement: 3, speed: 2 },
+            "60_69":  { penalties: 20, edu: +15, pow: +5, text: "СИЛ/ЛВК/ТЕЛ -20 всего; ОБР +15, МОЩ +5", improvement: 4, speed: 3 },
+            "70_79":  { penalties: 40, edu: +20, pow: +5, text: "СИЛ/ЛВК/ТЕЛ -40 всего; ОБР +20, МОЩ +5", improvement: 4, speed: 4 },
+            "80_plus":{ penalties: 80, edu: +25, pow: +5, text: "СИЛ/ЛВК/ТЕЛ -80 всего; ОБР +25, МОЩ +5", improvement: 4, speed: 5 }
         };
 
         const modifiers = AGE_MODIFIERS[age];
@@ -666,17 +665,35 @@ class CoCCharacterCreator {
         const { stat, action } = event.target.dataset;
         const input = document.getElementById(stat);
         let value = parseInt(input.value);
-        
+
         const strengthPenalty = parseInt(document.getElementById("penalty_str").value);
         const dexterityPenalty = parseInt(document.getElementById("penalty_dex").value);
         const constitutionPenalty = parseInt(document.getElementById("penalty_con").value);
-        
-        const used = strengthPenalty + dexterityPenalty + constitutionPenalty;
 
-        if (action === "increase" && used < this.currentAgePenaltyTotal) {
-            value++;
-        } else if (action === "decrease" && value > 0) {
-            value--;
+        const used = strengthPenalty + dexterityPenalty + constitutionPenalty;
+        const remaining = this.currentAgePenaltyTotal - used;
+
+        const operations = {
+            increase: () => {
+                if (remaining > 0) {
+                    value += 1;
+                }
+            },
+            "increase+": () => {
+                if (remaining > 0) {
+                    const increment = Math.min(10, remaining);
+                    value += increment;
+                }
+            },
+            decrease: () => {
+                if (value > 0) {
+                    value -= 1;
+                }
+            }
+        };
+
+        if (operations[action]) {
+            operations[action]();
         }
 
         input.value = value;
@@ -782,44 +799,6 @@ class CoCCharacterCreator {
         return document.getElementById("equipment").value;
     }
 
-    // SUMMARY
-    _renderSummary() {
-        const form = new FormData(document.getElementById("characterForm"));
-        const summary = document.getElementById("summary");
-        const stats = this.currentStats;
-        const damageInfo = this._getDamageBonus();
-
-        summary.innerHTML = `
-            <div><strong>Имя:</strong> ${this._getCharacterName()}</div>
-            <div><strong>Профессия:</strong> ${form.get("profession")}</div>
-            <div><strong>Credit Rating:</strong> ${form.get("creditRating")}</div>
-            <div><strong>Sanity:</strong> ${this._getSanity()}</div>
-            <div><strong>Hp:</strong> ${this._getHitPoints()}</div>
-            <div><strong>Mp:</strong> ${this._getMagicPoints()}</div>
-            <div><strong>Speed:</strong> ${this._getSpeed()}</div>
-            <div><strong>Luck:</strong> ${this.luckValue}</div>
-            <div><strong>Damage Bonus:</strong> ${damageInfo.damageBonus}</div>
-            <div><strong>Damage Reduction:</strong> ${damageInfo.damageReduction}</div>
-            <div><strong>Формула навыков:</strong> ${form.get("skillPointFormula")}</div>
-            <div><strong>Характеристики:</strong><br>
-                STR: ${stats.str}, CON: ${stats.con}, SIZ: ${stats.siz}<br>
-                DEX: ${stats.dex}, APP: ${stats.app}, INT: ${stats.int}<br>
-                POW: ${stats.pow}, EDU: ${stats.edu}
-            </div>
-            <div><strong>Выбранные навыки:</strong><br>
-                ${this.selectedSkills.join(", ")}
-            </div>
-            <div><strong>Внешность:</strong><br>
-                ${this._getAppearance()}
-            </div>
-            <div><strong>Инвентарь:</strong><br>
-                ${this._getEquipment()}
-            </div>
-            <div><strong>История:</strong><br>
-                ${this._getBackstory()}
-            </div>
-        `;
-    }
 
     // SUBMIT
     async _handleSubmit(event) {
