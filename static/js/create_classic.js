@@ -768,20 +768,22 @@ class CoCCharacterCreator {
     _getDamageBonus() {
         const value = this.currentStats.str + this.currentStats.con;
         
-        if (value >= 2 && value <= 64) {
-            return { damageBonus: -2, damageReduction: -2 };
-        } else if (value >= 65 && value <= 84) {
-            return { damageBonus: -1, damageReduction: -1 };
-        } else if (value >= 85 && value <= 124) {
+        if (value <= 1) {
             return { damageBonus: 0, damageReduction: 0 };
-        } else if (value >= 125 && value <= 164) {
+        } else if (value <= 64) {
+            return { damageBonus: -2, damageReduction: -2 };
+        } else if (value <= 84) {
+            return { damageBonus: -1, damageReduction: -1 };
+        } else if (value <= 124) {
+            return { damageBonus: 0, damageReduction: 0 };
+        } else if (value <= 164) {
             return { damageBonus: "1d4", damageReduction: 1 };
-        } else if (value >= 165 && value <= 204) {
+        } else if (value <= 204) {
             return { damageBonus: "1d6", damageReduction: 2 };
-        } else if (value >= 205 && value <= 284) {
+        } else if (value <= 284) {
             return { damageBonus: "2d6", damageReduction: 3 };
         } else {
-            return { damageBonus: 0, damageReduction: 0 };
+            return { damageBonus: "2d6", damageReduction: 3 };
         }
     }
 

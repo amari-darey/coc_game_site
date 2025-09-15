@@ -51,7 +51,7 @@
                     <div class="characteristic-item">
                         <label>{{ ch.rus }} ({{ ch.eng }})</label>
                         <div class="characteristic-main-value">
-                            <div class="main-square">{{ value }}</div>
+                            <div id="{{ ch.eng }}_stat" class="main-square">{{ value }}</div>
                             <div class="sub-squares">
                                 <div class="sub-square top">{{ (value / 2)|int }}</div>
                                 <div class="sub-square bottom">{{ (value / 5)|int }}</div>
@@ -65,15 +65,15 @@
                 <div class="characteristics-bonuses">
                     <div class="bonus-item">
                         <label>Бонус к урону</label>
-                        <div class="bonus-value">{{ context.damageUp if context else "0" }}</div>
+                        <div id="damageUp" class="bonus-value">{{ context.damageUp if context else "0" }}</div>
                     </div>
                     <div class="bonus-item">
                         <label>Скорость</label>
-                        <div class="bonus-value">{{ context.speed if context else "0" }}</div>
+                        <div id="speed" class="bonus-value">{{ context.speed if context else "0" }}</div>
                     </div>
                     <div class="bonus-item">
                         <label>Уменьшение урона</label>
-                        <div class="bonus-value">{{ context.damageReduction if context else "0" }}</div>
+                        <div id="damageReduction" class="bonus-value">{{ context.damageReduction if context else "0" }}</div>
                     </div>
                 </div>
             </div>

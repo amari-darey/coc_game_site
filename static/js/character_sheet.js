@@ -15,6 +15,66 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log(cell.textContent)
     }
 
+    function updateModifier() {
+        const newDamageBonus = getDamageBonus()
+        const newSpeed = getSpeed()
+        const currentDamageBonus = document.getElementById("damageUp")
+        const currentDamageRedaction = document.getElementById("damageReduction")
+        const currentSpeed = document.getElementById("speed")
+
+        currentDamageBonus.textContent = newDamageBonus.damageBonus
+        currentDamageRedaction.textContent = newDamageBonus.damageReduction
+        currentSpeed.textContent = newSpeed
+    }
+
+    function getDamageBonus() {
+        const con = parseInt(document.getElementById("CON_stat").textContent)
+        const str = parseInt(document.getElementById("STR_stat").textContent)
+        const value = str + con;
+        console.log(value)
+        
+        if (value <= 1) {
+            return { damageBonus: 0, damageReduction: 0 };
+        } else if (value <= 64) {
+            return { damageBonus: -2, damageReduction: -2 };
+        } else if (value <= 84) {
+            return { damageBonus: -1, damageReduction: -1 };
+        } else if (value <= 124) {
+            return { damageBonus: 0, damageReduction: 0 };
+        } else if (value <= 164) {
+            return { damageBonus: "1d4", damageReduction: 1 };
+        } else if (value <= 204) {
+            return { damageBonus: "1d6", damageReduction: 2 };
+        } else if (value <= 284) {
+            return { damageBonus: "2d6", damageReduction: 3 };
+        } else {
+            return { damageBonus: "2d6", damageReduction: 3 };
+        }
+    }
+
+    function getSpeed() {
+        const con = parseInt(document.getElementById("CON_stat").textContent)
+        const str = parseInt(document.getElementById("STR_stat").textContent)
+        const dex = parseInt(document.getElementById("DEX_stat").textContent)
+        const age = document.getElementById("character-age").textContent
+        const AGE_MODIFIERS = {
+            "15_19": 0,
+            "20_39": 0,
+            "40_49": 2,
+            "50_59": 2,
+            "60_69": 3,
+            "70_79": 4,
+            "80_plus": 5
+        };
+        if (dex > con && str > con) {
+            return 9 - AGE_MODIFIERS[age];
+        } else if (dex >= con || str >= con) {
+            return 8 - AGE_MODIFIERS[age];
+        } else {
+            return 7 - AGE_MODIFIERS[age];
+        }
+    }
+
     function addAdjustButtons() {
         document.querySelectorAll('.characteristic-item .main-square, .skill-item .main-square').forEach(square => {
             const wrapper = square.parentElement;
@@ -45,6 +105,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (topSquare) topSquare.textContent = Math.floor(val / 2);
             if (bottomSquare) bottomSquare.textContent = Math.floor(val / 5);
         }
+        
+        if (["CON_stat", "STR_stat", "DEX_stat"].includes(square.id)) updateModifier();
     }
 
     addAdjustButtons();
