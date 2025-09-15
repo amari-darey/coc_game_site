@@ -6,6 +6,15 @@ document.addEventListener('DOMContentLoaded', function() {
         addWeaponBtn.addEventListener('click', addWeapon);
     }
 
+    function addListenerToCell() {
+        document.querySelectorAll('.track-cell').forEach(cell => {cell.addEventListener('click', () => changeCell(cell))});
+    }
+
+    function changeCell(cell) {
+        console.log(cell.dataset.item)
+        console.log(cell.textContent)
+    }
+
     function addAdjustButtons() {
         document.querySelectorAll('.characteristic-item .main-square, .skill-item .main-square').forEach(square => {
             const wrapper = square.parentElement;
@@ -145,4 +154,6 @@ document.addEventListener('DOMContentLoaded', function() {
     makeEditable('.text-content#character-appearance', true);
     makeEditable('.text-content#character-backstory', true);
     makeEditable('.text-content#character-equipment', true);
+
+    addListenerToCell();
 });

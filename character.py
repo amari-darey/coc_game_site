@@ -1,6 +1,7 @@
 class Character:
     def __init__(self, char, *args, **kwargs):
         self.name = char.get("name")
+        self.age = char.get("age")
         self.proffesion = char.get("proffesion")
         self.stats = char.get("stat")
         self.skills = char.get("skill")
@@ -25,6 +26,7 @@ class Character:
 if __name__ == "__main__":
     char = {
         'name': 'Стандартный учитель', 
+        'age': '15-19',
         'proffesion': 'Учитель', 
         'stat': {
             'str': 55, 

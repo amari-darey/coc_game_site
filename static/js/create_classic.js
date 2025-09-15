@@ -789,6 +789,10 @@ class CoCCharacterCreator {
         return document.getElementById("charName").value;
     }
 
+    _getAge() {
+        return document.getElementById("ageRange").value;
+    }
+
     _getAppearance() {
         return document.getElementById("appearanceDesc").value;
     }
@@ -808,6 +812,7 @@ class CoCCharacterCreator {
         
         const result = {
             "name": this._getCharacterName(),
+            "age": this._getAge(),
             "proffesion": document.getElementById("profession").value,
             "stat": this.currentStats,
             "skill": this.currentSkills,
