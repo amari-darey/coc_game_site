@@ -140,31 +140,31 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="weapon-fields-row">
                 <div class="weapon-field">
                     <label>Оружие</label>
-                    <div class="weapon-value" data-field="name"><input type="text" placeholder="Название оружия"></div>
+                    <div class="weapon-value" data-field="name"><input class="styled-input" type="text" placeholder="Название"></div>
                 </div>
                 <div class="weapon-field">
                     <label>Навык</label>
-                    <div class="weapon-value" data-field="skill"><input type="text" placeholder="Навык"></div>
+                    <div class="weapon-value" data-field="skill"><input class="styled-input" type="text" placeholder="Навык"></div>
                 </div>
                 <div class="weapon-field">
                     <label>Урон</label>
-                    <div class="weapon-value" data-field="damage"><input type="text" placeholder="Урон"></div>
+                    <div class="weapon-value" data-field="damage"><input class="styled-input" type="text" placeholder="Урон"></div>
                 </div>
                 <div class="weapon-field">
                     <label>Дистанция</label>
-                    <div class="weapon-value" data-field="distance"><input type="text" placeholder="Дистанция"></div>
+                    <div class="weapon-value" data-field="distance"><input class="styled-input" type="text" placeholder="Дистанция"></div>
                 </div>
                 <div class="weapon-field">
                     <label>Атак/раунд</label>
-                    <div class="weapon-value" data-field="fire_rate"><input type="text" placeholder="Атак/раунд"></div>
+                    <div class="weapon-value" data-field="fire_rate"><input class="styled-input" type="text" placeholder="Атак/раунд"></div>
                 </div>
                 <div class="weapon-field">
                     <label>Боезапас</label>
-                    <div class="weapon-value" data-field="ammo"><input type="text" placeholder="Боезапас"></div>
+                    <div class="weapon-value" data-field="ammo"><input class="styled-input" type="text" placeholder="Боезапас"></div>
                 </div>
                 <div class="weapon-field">
                     <label>Осечка</label>
-                    <div class="weapon-value" data-field="misfire"><input type="text" placeholder="Осечка"></div>
+                    <div class="weapon-value" data-field="misfire"><input class="styled-input" type="text" placeholder="Осечка"></div>
                 </div>
             </div>
             <button class="weapon-delete-btn" data-weapon-id="${weaponId}">×</button>
