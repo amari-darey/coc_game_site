@@ -135,7 +135,7 @@ class CoCCharacterCreator {
     _changeStat(event) {
         const { stat, action } = event.target.dataset;
         const input = document.getElementById(stat);
-        const minValue = ["size", "intelligence"].includes(stat) ? 40 : 15;
+        const minValue = ["siz", "int"].includes(stat) ? 40 : 15;
 
         let value = parseInt(input.value);
 
@@ -178,7 +178,7 @@ class CoCCharacterCreator {
         document.querySelectorAll(".stat-btn:not(.penalty-btn)").forEach(button => {
             const { stat, action } = button.dataset;
             const value = this.currentStats[stat];
-            const minValue = ["size", "intelligence"].includes(stat) ? 40 : 15;
+            const minValue = ["siz", "int"].includes(stat) ? 40 : 15;
 
             button.disabled = (
                 (action.startsWith("increase") && (value >= 90 || this.pointsLeft <= 0)) ||
