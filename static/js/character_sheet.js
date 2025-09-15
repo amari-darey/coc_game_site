@@ -1,11 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const printBtn = document.getElementById('print-character');
     const addWeaponBtn = document.getElementById('add-weapon-btn');
     document.getElementById('return-to-main').addEventListener("click", () => window.location.href = "/")
-
-    if (printBtn) {
-        printBtn.addEventListener('click', () => window.print());
-    }
 
     if (addWeaponBtn) {
         addWeaponBtn.addEventListener('click', addWeapon);

@@ -422,11 +422,13 @@ class CoCCharacterCreator {
     // ШАГ 5
     _handleStepFive() {
         const age = document.getElementById("ageRange");
+        const luckTryElement = document.querySelector("#luckTryNum strong");
         
         if (age.value === "15_19") {
             this.luckTry = 2;
             this.luckFlag = true;
         }
+        luckTryElement.textContent = this.luckTry
     }
 
     _rollLuck() {
