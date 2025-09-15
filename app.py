@@ -34,6 +34,13 @@ def character():
                          SKILLS=SKILLS,
                          CHARACTERISTICS=CHARACTERISTICS)
 
+@app.route("/character-save", methods=["GET", "POST"])
+def character_save():
+    if request.method == "POST":
+        char_data = Character(request.get_json())
+        session['character_data'] = char_data.get_all_stats()
+    return redirect(url_for("/"))
+
 
 if __name__ == "__main__":
     app.run("0.0.0.0", 5100)

@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const addWeaponBtn = document.getElementById('add-weapon-btn');
     document.getElementById('return-to-main').addEventListener("click", () => window.location.href = "/")
+    document.getElementById('save-character').addEventListener('click', collectCharacterData);
 
     if (addWeaponBtn) {
         addWeaponBtn.addEventListener('click', addWeapon);
@@ -209,6 +210,99 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             });
         });
+    }
+
+    function collectCharacterData() {
+        const name = document.getElementById('character-name').textContent;
+        const profession = document.getElementById('character-profession').textContent;
+        const age = parseInt(document.getElementById('character-age').textContent) || 0;
+
+        const stats = {};
+        const characteristicIds = ['STR', 'CON', 'DEX', 'APP', 'EDU', 'INT', 'POW', 'SIZ'];
+        characteristicIds.forEach(id => {
+            const element = document.getElementById(`${id}_stat`);
+            if (element) {
+                stats[id] = parseInt(element.textContent) || 0;
+            }
+        });
+
+        const skills = {};
+        document.querySelectorAll('.skill-item').forEach(item => {
+            const label = item.querySelector('label');
+            const valueElement = item.querySelector('.main-square');
+            if (label && valueElement) {
+                const skillName = label.textContent.trim();
+                const value = parseInt(valueElement.textContent) || 0;
+                skills[skillName] = value;
+            }
+        });
+
+        const professionalSkills = [];
+        const professionalSkillsSection = document.querySelector('.professional-skills-section');
+        if (professionalSkillsSection) {
+            professionalSkillsSection.querySelectorAll('.professional-skill-name').forEach(skillElement => {
+                const skillName = skillElement.textContent.trim();
+                if (skillName) {
+                    professionalSkills.push(skillName);
+                }
+            });
+        }
+
+        const getTrackValue = (dataItem) => {
+            const activeCell = document.querySelector(`.track-cell.active[data-item="${dataItem}"]`);
+            return activeCell ? parseInt(activeCell.textContent) : 0;
+        };
+
+        const luck = getTrackValue('luck');
+        const sanity = getTrackValue('sanity');
+        const hp = getTrackValue('hp');
+        const mp = getTrackValue('mp');
+
+        const damageBonus = getDamageBonus();
+        const speed = getSpeed();
+
+        const appearance = document.getElementById('character-appearance').textContent.replace(/\s{2,}/g, "");
+        const backstory = document.getElementById('character-backstory').textContent.replace(/\s{2,}/g, "");
+        const equipment = document.getElementById('character-equipment').textContent.replace(/\s{2,}/g, "");
+
+        const weapons = [];
+        document.querySelectorAll('.weapon-card').forEach(card => {
+            const weapon = {
+                name: card.querySelector('.weapon-value[data-field="name"] input').value.trim(),
+                skill: card.querySelector('.weapon-value[data-field="skill"] input').value.trim(),
+                damage: card.querySelector('.weapon-value[data-field="damage"] input').value.trim(),
+                distance: card.querySelector('.weapon-value[data-field="distance"] input').value.trim(),
+                fire_rate: card.querySelector('.weapon-value[data-field="fire_rate"] input').value.trim(),
+                ammo: card.querySelector('.weapon-value[data-field="ammo"] input').value.trim(),
+                misfire: card.querySelector('.weapon-value[data-field="misfire"] input').value.trim()
+            };
+
+            if (weapon.name) {
+                weapons.push(weapon);
+            }
+        });
+
+        const result = {
+            name,
+            age,
+            profession,
+            stat: stats,
+            skill: skills,
+            professionalSkills,
+            sanity,
+            hp,
+            mp,
+            speed: speed,
+            luck,
+            damageUp: damageBonus.damageBonus,
+            damageReduction: damageBonus.damageReduction,
+            appearance,
+            backstory,
+            equipment,
+            weapons
+        };
+
+        console.log(result);
     }
 
     makeEditable('.info-value#character-name');
