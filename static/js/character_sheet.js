@@ -122,9 +122,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     document.addEventListener('click', function(e) {
-        if (e.target.classList.contains('weapon-delete-btn')) {
-            deleteWeapon(e.target.dataset.weaponId);
-        }
+      if (e.target.classList.contains('weapon-delete-btn')) {
+        const card = e.target.closest('.weapon-card');
+        deleteWeapon(e.target.dataset.weaponId ?? null, card);
+      }
     });
 
     function addWeapon() {
@@ -174,14 +175,28 @@ document.addEventListener('DOMContentLoaded', function() {
         weaponsContainer.appendChild(weaponCard);
     }
 
-    function deleteWeapon(weaponId) {
-        const weaponCard = document.querySelector(`.weapon-card[data-weapon-id="${weaponId}"]`);
-        if (weaponCard) weaponCard.remove();
-
-        const weaponsContainer = document.getElementById('weapons-container');
-        if (weaponsContainer.children.length === 0) {
-            weaponsContainer.innerHTML = '<div class="no-weapons">Оружие не добавлено</div>';
+    function deleteWeapon(weaponId = null, cardElement = null) {
+      let weaponCard = cardElement;
+      if (!weaponCard && weaponId !== null) {
+        try {
+          weaponCard = document.querySelector(`.weapon-card[data-weapon-id="${CSS.escape(weaponId)}"]`);
+        } catch (err) {
+          weaponCard = document.querySelector(`.weapon-card[data-weapon-id="${weaponId}"]`);
         }
+      }
+
+      if (!weaponCard) return;
+
+      weaponCard.remove();
+
+      const weaponsContainer = document.getElementById('weapons-container');
+      const remaining = weaponsContainer ? weaponsContainer.querySelectorAll('.weapon-card').length : 0;
+
+      if (weaponsContainer && remaining === 0) {
+        if (!weaponsContainer.querySelector('.no-weapons')) {
+          weaponsContainer.innerHTML = '<div class="no-weapons">Оружие не добавлено</div>';
+        }
+      }
     }
 
     function makeEditable(selector, multiline = false) {
@@ -266,16 +281,31 @@ document.addEventListener('DOMContentLoaded', function() {
         const equipment = document.getElementById('character-equipment').textContent.replace(/\s{2,}/g, "");
 
         const weapons = [];
+        const keys = ['name','skill','damage','distance','fire_rate','ammo','misfire'];
         document.querySelectorAll('.weapon-card').forEach(card => {
-            const weapon = {
-                name: card.querySelector('.weapon-value[data-field="name"] input').value.trim(),
-                skill: card.querySelector('.weapon-value[data-field="skill"] input').value.trim(),
-                damage: card.querySelector('.weapon-value[data-field="damage"] input').value.trim(),
-                distance: card.querySelector('.weapon-value[data-field="distance"] input').value.trim(),
-                fire_rate: card.querySelector('.weapon-value[data-field="fire_rate"] input').value.trim(),
-                ammo: card.querySelector('.weapon-value[data-field="ammo"] input').value.trim(),
-                misfire: card.querySelector('.weapon-value[data-field="misfire"] input').value.trim()
-            };
+            const weapon = {};
+
+            keys.forEach(key => {
+                const fieldEl = card.querySelector(`.weapon-value[data-field="${key}"]`);
+                if (fieldEl) {
+                    const input = fieldEl.querySelector('input');
+                    weapon[key] = input ? input.value.trim() : fieldEl.textContent.trim();
+                } else {
+                    weapon[key] = '';
+                }
+            });
+
+            const valuesEls = Array.from(card.querySelectorAll('.weapon-value'));
+            if (valuesEls.length) {
+                valuesEls.forEach((el, idx) => {
+                    if (idx >= keys.length) return;
+                    const key = keys[idx];
+                    if (!weapon[key] || weapon[key] === '') {
+                        const input = el.querySelector('input');
+                        weapon[key] = input ? input.value.trim() : el.textContent.trim();
+                    }
+                });
+            }
 
             if (weapon.name) {
                 weapons.push(weapon);

@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, make_response
+import uuid
 from character import Character
 from constant import *
 
@@ -6,10 +7,26 @@ from constant import *
 app = Flask(__name__)
 app.secret_key = 'your-secret-key'
 
+users = {}
+
+
+def generate_token():
+    return str(uuid.uuid4())
+
+
 @app.route("/", methods=["GET", "POST"])
 def index():
-    context = session.get('character_data', False)
-    print(context)
+    token = request.cookies.get("auth_token")
+
+    if not token or token not in users:
+        token = generate_token()
+        users[token] = {}
+
+        resp = make_response(redirect("/"))
+        resp.set_cookie("auth_token", token, httponly=True, max_age=60*60*24*30)
+        return resp
+
+    context = users[token] if isinstance(users[token], Character) else False
     return render_template("index.html", context=context)
 
 
@@ -24,27 +41,39 @@ def create():
     }
     return render_template("create_investigator_classic.html", context=context)
 
+
 @app.route("/character", methods=["GET", "POST"])
 def character():
+    token = request.cookies.get("auth_token")
+    if  not token or token not in users: return redirect("/")
+
     if request.method == "POST":
-        char_data = Character(request.get_json())
-        session['character_data'] = char_data.get_all_stats()
-    context = session.get('character_data')
+        data = request.get_json()
+        if data:
+            users[token] = Character(data)
+
+    if isinstance(users[token], Character):
+        context = users[token].get_all_stats()
+    else:
+        context = False
     return render_template('character_sheet.html', 
                          context=context,
                          editable=True,
                          SKILLS=SKILLS,
                          CHARACTERISTICS=CHARACTERISTICS)
 
+
 @app.route("/character-save", methods=["GET", "POST"])
 def character_save():
+    token = request.cookies.get("auth_token")
+
+    if not token or token not in users: return redirect("/")
+
     if request.method == "POST":
         data = request.get_json()
-        for k, v in data.items():
-            print(k, " - ", v)
-        char_data = Character(data)
-        print(char_data.__dict__)
-        session['character_data'] = char_data.get_all_stats()
+        if data:
+            users[token] = Character(data)
+
     return redirect("/")
 
 
