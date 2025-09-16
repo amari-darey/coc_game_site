@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalOverlay = document.getElementById('modalOverlay');
     const createButton = document.getElementById('createButton');
     const closeModal = document.getElementById('closeModal');
-    const fastCreateButton = document.getElementById('fastCreate');
 
     if (!tentaclesContainer) return;
 
@@ -15,11 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
             closeModalHandler();
         }
     });
-
-    fastCreateButton.addEventListener('click', function() {
-            alert('Fast Create feature will be available soon!');
-            closeModalHandler();
-        });
 
     function openModal() {
         modalOverlay.classList.add('active');

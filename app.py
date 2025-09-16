@@ -42,6 +42,18 @@ def create():
     return render_template("create_investigator_classic.html", context=context)
 
 
+@app.route("/fast-create")
+def fast_create():
+    context = {
+        "skills": SKILLS,
+        "characteristic": CHARACTERISTICS,
+        "age": AGE,
+        "money": MONEY,
+        "skillFormula": SKILL_FORMULA,
+    }
+    return render_template("create_investigator_fast.html", context=context)
+
+
 @app.route("/character", methods=["GET", "POST"])
 def character():
     token = request.cookies.get("auth_token")
