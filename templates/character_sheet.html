@@ -29,7 +29,7 @@
             </div>
             <div class="info-item">
                 <label>Профессия</label>
-                <div class="info-value" id="character-profession">{{ context.proffesion if context else '' }}</div>
+                <div class="info-value" id="character-proffesion">{{ context.proffesion if context else '' }}</div>
             </div>
             <div class="info-item">
                 <label>Возраст</label>
@@ -133,7 +133,7 @@
                     {% set base_value = skill.base if skill.base is number else 0 %}
                     {% set value = context.skill[skill.id] if context and context.skill and skill.id in context.skill else base_value %}
                     <div class="skill-item">
-                        <label for="skill-{{ skill.id }}">{{ skill.rus }}</label>
+                        <label id="{{ skill.id }}" for="skill-{{ skill.id }}">{{ skill.rus }}</label>
                         <div class="skill-main-value">
                             <div class="main-square">{{ value }}</div>
                             <div class="sub-squares">
@@ -156,7 +156,7 @@
         <div class="professional-skills-grid">
             {% for skill_name in context.proffesionalSkill %}
             <div class="professional-skill-item">
-                <div class="professional-skill-name">{{ skill_name }}</div>
+                <div id="{{ skill_name.id }}" class="professional-skill-name">{{ skill_name }}</div>
             </div>
             {% endfor %}
         </div>

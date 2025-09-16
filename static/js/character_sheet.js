@@ -212,17 +212,17 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function collectCharacterData() {
+    async function collectCharacterData() {
         const name = document.getElementById('character-name').textContent;
-        const profession = document.getElementById('character-profession').textContent;
-        const age = parseInt(document.getElementById('character-age').textContent) || 0;
+        const proffesion = document.getElementById('character-proffesion').textContent;
+        const age = document.getElementById('character-age').textContent || 0;
 
         const stats = {};
         const characteristicIds = ['STR', 'CON', 'DEX', 'APP', 'EDU', 'INT', 'POW', 'SIZ'];
         characteristicIds.forEach(id => {
             const element = document.getElementById(`${id}_stat`);
             if (element) {
-                stats[id] = parseInt(element.textContent) || 0;
+                stats[id.toLowerCase()] = parseInt(element.textContent) || 0;
             }
         });
 
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const label = item.querySelector('label');
             const valueElement = item.querySelector('.main-square');
             if (label && valueElement) {
-                const skillName = label.textContent.trim();
+                const skillName = label.id;
                 const value = parseInt(valueElement.textContent) || 0;
                 skills[skillName] = value;
             }
@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const result = {
             name,
             age,
-            profession,
+            proffesion,
             stat: stats,
             skill: skills,
             professionalSkills,
@@ -303,6 +303,24 @@ document.addEventListener('DOMContentLoaded', function() {
         };
 
         console.log(result);
+
+        try {
+            const response = await fetch('http://127.0.0.1:5100/character-save', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(result)
+            });
+
+            if (response.ok) {
+                window.location.href = '/';
+            } else {
+                console.error('Ошибка сервера:', response.status);
+            }
+        } catch (error) {
+            console.error('Ошибка отправки:', error);
+        }
     }
 
     makeEditable('.info-value#character-name');

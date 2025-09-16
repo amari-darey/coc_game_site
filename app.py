@@ -8,7 +8,9 @@ app.secret_key = 'your-secret-key'
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template("index.html")
+    context = session.get('character_data', False)
+    print(context)
+    return render_template("index.html", context=context)
 
 
 @app.route("/create")
@@ -37,9 +39,13 @@ def character():
 @app.route("/character-save", methods=["GET", "POST"])
 def character_save():
     if request.method == "POST":
-        char_data = Character(request.get_json())
+        data = request.get_json()
+        for k, v in data.items():
+            print(k, " - ", v)
+        char_data = Character(data)
+        print(char_data.__dict__)
         session['character_data'] = char_data.get_all_stats()
-    return redirect(url_for("/"))
+    return redirect("/")
 
 
 if __name__ == "__main__":
