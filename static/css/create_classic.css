@@ -749,3 +749,57 @@ textarea:focus {
     border-radius: 8px;
     border: 1px solid #3a2e66;
 }
+
+/* Fast create stat */
+
+.stat-pool {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.stat-number {
+    width: 80px;
+    height: 80px;
+    background: rgba(42, 35, 75, 0.7);
+    border: 2px solid #3a2e66;
+    border-radius: 12px;
+    color: #c9a86d;
+    font-size: 1.6rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-number:active {
+    cursor: grabbing;
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(201,168,109,0.4);
+}
+
+.stat-dropzone {
+    background: rgba(26, 22, 48, 0.5);
+    border: 2px dashed #3a2e66;
+    border-radius: 10px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b6880;
+    font-size: 1rem;
+    margin-top: 10px;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.stat-dropzone.dragover {
+    border-color: #8a4b9e;
+    background: rgba(138, 75, 158, 0.2);
+    color: #c9a86d;
+    box-shadow: 0 0 10px rgba(138, 75, 158, 0.5);
+}
