@@ -829,6 +829,17 @@ class CoCCharacterCreator {
             "appearance": this._getAppearance(),
             "backstory": this._getBackstory(),
             "equipment": this._getEquipment(),
+            "weapons": [
+                {
+                    "name": "Brawl",
+                    "skill": "fighting_brawl", 
+                    "damage": "1d3 + damage bonus", 
+                    "distance": "Touch", 
+                    "fire_rate": "1", 
+                    "ammo": "-", 
+                    "misfire": "-" 
+                }, 
+            ]
         };
 
         try {
