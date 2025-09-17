@@ -52,23 +52,6 @@
                 </div>
 
                 <div class="card-section">
-                    <h3 class="section-title">8 профессиональных навыков</h3>
-                    <div class="counter">
-                        Выбрано навыков: <span id="skillsCounter">0</span> / 8
-                    </div>
-                    <div class="selected-skills-list" id="selectedSkillsList"></div>
-                </div>
-
-                <div class="card-section">
-                    <div class="form-group">
-                        <label for="creditRating">Credit Rating:</label>
-                        <select id="creditRating" name="creditRating" required>
-                            {% for money_option in context.money %}
-                            <option value="{{ money_option.id }}">{{ money_option.rus }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
                     <div class="form-group">
                         <label for="skillPointFormula">Skill Point Formula:</label>
                         <select id="skillPointFormula" name="skillPointFormula" required>
@@ -79,6 +62,14 @@
                     </div>
                 </div>
             </div>
+
+            <div class="card-section">
+                    <h3 class="section-title">8 профессиональных навыков</h3>
+                    <div class="counter">
+                        Выбрано навыков: <span id="skillsCounter">0</span> / 8
+                    </div>
+                    <div class="selected-skills-list" id="selectedSkillsList"></div>
+                </div>
 
             <h3 class="section-title">Выберите 8 профессиональных навыков</h3>
 

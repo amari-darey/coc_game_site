@@ -95,9 +95,6 @@ h2 {
     border-radius: 10px;
     padding: 20px;
     margin-bottom: 30px;
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    grid-template-rows: auto auto;
     gap: 20px;
 }
 
@@ -107,7 +104,6 @@ h2 {
     justify-content: space-between;
     align-items: center;
     padding-bottom: 15px;
-    border-bottom: 1px solid #3a2e66;
 }
 
 .card-section { display: flex; flex-direction: column; }

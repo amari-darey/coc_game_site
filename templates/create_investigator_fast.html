@@ -58,22 +58,11 @@
                     </div>
                     <div class="selected-skills-list" id="selectedSkillsList"></div>
                 </div>
-
-                <div class="card-section">
-                    <div class="form-group">
-                        <label for="creditRating">Credit Rating:</label>
-                        <select id="creditRating" name="creditRating" required>
-                            {% for money_option in context.money %}
-                            <option value="{{ money_option.id }}">{{ money_option.rus }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
             </div>
 
-            <h3 class="section-title">Выберите 8 профессиональных навыков</h3>
+            <h3 class="section-title full-width">Выберите 8 профессиональных навыков</h3>
 
-            <div class="skills-container">
+            <div class="skills-container full-width">
                 {% for category, skills in context.skills.items() %}
                 {% if category not in ['Мифы Ктулху', 'Финансы'] %}
                 <div class="skill-category">
