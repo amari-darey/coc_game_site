@@ -135,13 +135,13 @@ class CoCCharacterCreator {
     }
 
     _handleStepFour() {
-        this._hideNonProfessionalSkill();
+        this._hideSkill(true);
         this._populateSkillStatPool([70,60,60,50,50,50,40,40,40]);
         this._redirectNextButton();
     }
 
     _handlerStepFourAlt() {
-        this._hideProfessionalSkill();
+        this._hideSkill(false);
         this._populateSkillStatPool([20, 20, 20, 20]);
         this._undoRedirectNextButton();
     }
@@ -157,25 +157,23 @@ class CoCCharacterCreator {
         document.getElementById("nextBtn").addEventListener("click", this.nextStepHandler);
     }
 
-    _hideNonProfessionalSkill() {
-        const selectedLower = (this.selectedSkills || []).map(s => String(s).toLowerCase().trim());
+    _hideSkill(proffesion) {
         const labels = document.querySelectorAll('#skill_distribution .skill-item label');
 
         labels.forEach(label => {
             const item = label.closest('.skill-item');
             if (!item) return;
 
-            const cat = label.closest('.skill-category-skill');
-            const catTitle = cat ? (cat.querySelector('h3')?.textContent || '').trim() : '';
-
-            if (catTitle === 'Финансы') {
-                item.style.display = '';
-                item.querySelectorAll('input,select,textarea,button').forEach(el => el.disabled = false);
-                return;
+            const text = label.textContent;
+            let isSelected;
+            if (proffesion) {
+                isSelected = this.selectedSkills.includes(text);
+                if (text == "Средства") isSelected = true;
             }
-
-            const text = label.textContent.trim().toLowerCase();
-            const isSelected = selectedLower.includes(text);
+            else {
+                isSelected = !this.selectedSkills.includes(text);
+                if (text == "Средства") isSelected = false;
+            }
 
             if (isSelected) {
                 item.style.display = '';
@@ -184,37 +182,6 @@ class CoCCharacterCreator {
                 item.style.display = 'none';
                 item.querySelectorAll('input,select,textarea,button').forEach(el => el.disabled = true);
             }
-        });
-    }
-
-
-    _hideProfessionalSkill() {
-        // FIX THIS!!!
-        const labels = document.querySelectorAll('#skill_distribution .skill-item label');
-
-        labels.forEach(label => {
-            const item = label.closest('.skill-item');
-            if (!item) return;
-
-            const cat = label.closest('.skill-category-skill');
-            const catTitle = cat ? (cat.querySelector('h3')?.textContent || '').trim() : '';
-            const lowerTitle = catTitle.toLowerCase();
-
-            const isFinance = catTitle === 'Финансы' || lowerTitle === 'финансы';
-            const isProf = lowerTitle.includes('проф');
-
-            if (isFinance || isProf) {
-                item.style.display = 'none';
-                item.querySelectorAll('input,select,textarea,button').forEach(el => el.disabled = true);
-            } else {
-                item.style.display = '';
-                item.querySelectorAll('input,select,textarea,button').forEach(el => el.disabled = false);
-            }
-        });
-
-        document.querySelectorAll('#skill_distribution .skill-category-skill').forEach(cat => {
-            const anyVisible = Array.from(cat.querySelectorAll('.skill-item')).some(i => i.style.display !== 'none');
-            cat.style.display = anyVisible ? '' : 'none';
         });
     }
 
