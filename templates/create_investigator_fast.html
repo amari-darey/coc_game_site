@@ -181,29 +181,35 @@
         <div class="form-step" data-step="4">
             <h2>Шаг 4: Распределение навыков</h2>
             <div id="step_4_formula_wait">
-                <p id="skill_formula" class="step-note">Распределите очки навыков (основа: INT × 2 + EDU × 2)</p>
                 <div class="points-container">
                     <div class="points-info">
-                        <p id="skillPointsMax">Распределите <strong>290 поинтов</strong> между профессиональными навыками</p>
-                        <div class="points-remaining">
-                            Осталось поинтов: <span id="skillPointsLeft">290</span>
-                        </div>
+                        <p id="skillPointsMax">Распределите все значения по навыкам</p>
                     </div>
                 </div>
 
-                <div class="skills-container-skill" id="skill_distribution">
-                    <h1>{{ context.skills.items() }}</h1>
+                <div class="statPoolSkill" id="statPoolSkill">
+                    <div class="stat-number" draggable="true">70</div>
+                    <div class="stat-number" draggable="true">60</div>
+                    <div class="stat-number" draggable="true">60</div>
+                    <div class="stat-number" draggable="true">50</div>
+                    <div class="stat-number" draggable="true">50</div>
+                    <div class="stat-number" draggable="true">50</div>
+                    <div class="stat-number" draggable="true">40</div>
+                    <div class="stat-number" draggable="true">40</div>
+                    <div class="stat-number" draggable="true">40</div>
+                </div>
+
+                <div class="skills-container-skill-fast" id="skill_distribution">
+                    {% for category, skills in context.skills.items() %}
                     <div class="skill-category-skill">
                         <h3>{{ category }}</h3>
                         {% for skill in skills %}
                             <div class="skill-item">
                                 <label for="skill_alloc_{{ skill.id }}">{{ skill.rus }}</label>
                                 <div class="stat-control">
-                                    <button type="button" class="stat-btn" data-skill="{{ skill.id }}" data-skill-rus="{{ skill.rus }}" data-action="skillDecrease">-</button>
                                     <input type="number" id="skill_alloc_{{ skill.id }}" name="skillsAllocation[{{ skill.id }}]"
                                            value="{{ skill.base if skill.base is number else 0 }}" min="0" max="100" readonly>
-                                    <button type="button" class="stat-btn" data-skill="{{ skill.id }}" data-skill-rus="{{ skill.rus }}" data-action="skillIncrease">+</button>
-                                    <button type="button" class="stat-btn" data-skill="{{ skill.id }}" data-skill-rus="{{ skill.rus }}" data-action="skillIncrease+">+10</button>
+                                    <div class="stat-dropzone">Перетащите сюда</div>
                                 </div>
                             </div>
                         {% endfor %}

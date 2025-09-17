@@ -76,7 +76,7 @@ CHARACTERISTICS = [
     {"id": "dex", "rus": "Ловкость", "eng": "DEX", "base": 15},
     {"id": "app", "rus": "Внешность", "eng": "APP", "base": 15},
     {"id": "int", "rus": "Интеллект", "eng": "INT", "base": 40},
-    {"id": "pow", "rus": "Сила воли", "eng": "POW", "base": 15},
+    {"id": "pow", "rus": "Мощь", "eng": "POW", "base": 15},
     {"id": "edu", "rus": "Образование", "eng": "EDU", "base": 15},
 ]
 

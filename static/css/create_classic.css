@@ -702,6 +702,13 @@ textarea:focus {
     margin-bottom: 20px;
 }
 
+.skills-container-skill-fast {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
 .skill-category-skill {
     background: rgba(42, 35, 75, 0.5);
     padding: 20px;
@@ -760,6 +767,19 @@ textarea:focus {
     margin-bottom: 30px;
 }
 
+.statPoolSkill {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 30px;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 16px;
+    z-index: 1000;
+    overflow: auto;
+}
+
 .stat-number {
     width: 80px;
     height: 80px;
@@ -802,4 +822,55 @@ textarea:focus {
     background: rgba(138, 75, 158, 0.2);
     color: #c9a86d;
     box-shadow: 0 0 10px rgba(138, 75, 158, 0.5);
+}
+
+.stat-tooltip {
+  position: absolute;
+  z-index: 9999;
+  min-width: 160px;
+  max-width: 320px;
+  background: #111827;
+  color: #fff;
+  border-radius: 8px;
+  padding: 8px 10px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  font-size: 13px;
+  line-height: 1.3;
+  pointer-events: none; 
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity .12s ease, transform .12s ease;
+}
+
+.stat-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.stat-tooltip .title {
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.stat-tooltip .pool-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.stat-tooltip .pool-item {
+  background: rgba(255,255,255,0.06);
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  min-width: 36px;
+  text-align: center;
+}
+
+.stat-tooltip .empty {
+  opacity: 0.85;
+  font-size: 13px;
+  color: #cbd5e1;
 }
