@@ -146,6 +146,12 @@ class CoCCharacterCreator {
     }
 
     _handlerStepFourAlt() {
+        const poolNumbers = document.querySelectorAll("#statPoolSkill .stat-number");
+        const filledDropzones = document.querySelectorAll(".stat-dropzone[data-filled='true']");
+        if (poolNumbers.length > 0 || filledDropzones.length < 9) {
+            alert("Распределите все числа по профессиональным навыкам");
+            return false;
+        }
         this._hideSkill(false);
         this._populateSkillStatPool([20, 20, 20, 20]);
         this._undoRedirectNextButton();
@@ -461,6 +467,14 @@ class CoCCharacterCreator {
         if (this.currentStep === 3 && this.eduImprovementCurrent !== this.eduImprovementMax) {
             alert("Пройдите проверки образования");
             return false;
+        }
+        if (this.currentStep === 4) {
+            const poolNumbers = document.querySelectorAll("#statPoolSkill .stat-number");
+            const filledDropzones = document.querySelectorAll(".stat-dropzone[data-filled='true']");
+            if (poolNumbers.length > 0 || filledDropzones.length < 4) {
+                alert("Распределите все числа по навыкам хобби");
+                return false;
+            }
         }
         if (this.currentStep === 5 && this.luckTry !== 0) {
             alert(this.luckTry);
