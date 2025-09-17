@@ -157,7 +157,7 @@ class CoCCharacterCreator {
         document.getElementById("nextBtn").addEventListener("click", this.nextStepHandler);
     }
 
-    _hideSkill(proffesion) {
+    _hideSkill(isProffesion) {
         const labels = document.querySelectorAll('#skill_distribution .skill-item label');
 
         labels.forEach(label => {
@@ -166,7 +166,7 @@ class CoCCharacterCreator {
 
             const text = label.textContent;
             let isSelected;
-            if (proffesion) {
+            if (isProffesion) {
                 isSelected = this.selectedSkills.includes(text);
                 if (text == "Средства") isSelected = true;
             }
