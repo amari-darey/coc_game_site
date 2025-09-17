@@ -204,13 +204,10 @@
                     <div class="skill-category-skill">
                         <h3>{{ category }}</h3>
                         {% for skill in skills %}
-                            <div class="skill-item">
-                                <label for="skill_alloc_{{ skill.id }}">{{ skill.rus }}</label>
-                                <div class="stat-control">
-                                    <input type="number" id="skill_alloc_{{ skill.id }}" name="skillsAllocation[{{ skill.id }}]"
-                                           value="{{ skill.base if skill.base is number else 0 }}" min="0" max="100" readonly>
-                                    <div class="stat-dropzone">Перетащите сюда</div>
-                                </div>
+                            <div class="stat-group droppable" data-stat="{{ skill.id }}">
+                                <label data-name="{{ skill.rus }}">{{ skill.rus }} ({{ skill.base }})</label>
+                                <div class="stat-dropzone">Перетащите сюда</div>
+                                <input type="hidden" name="skill[{{ skill.id }}]" value="">
                             </div>
                         {% endfor %}
                     </div>

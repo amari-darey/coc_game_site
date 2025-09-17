@@ -11,9 +11,6 @@ class CoCCharacterCreator {
         this.maxSkills = 8;
         this.currentStats = this._initStats();
         this.currentSkills = this._initSkills();
-        this.skillPointProfessional = 0;
-        this.skillPointProfessionalLess = 0;
-        this.skillPointChoice = "edu";
         this.skillPointFlag = true;
         this.eduImprovementCurrent = 0;
         this.eduImprovementMax = 0;
@@ -45,16 +42,24 @@ class CoCCharacterCreator {
         this._bindNavigationEvents();
         this._bindSkillsEvents();
         this._bindCharacteristicDragEvents();
+        this._bindSkillDragEvents();
         this._bindAgeEvents();
         this._bindLuck();
         this._bindFormSubmitEvent();
     }
 
     _bindCharacteristicDragEvents() {
-        const numbers = document.querySelectorAll(".stat-number");
-        const dropzones = document.querySelectorAll(".stat-dropzone");
+        const numbers = document.querySelectorAll("#statPool .stat-number");
+        const dropzones = document.querySelectorAll("#statTargets .stat-dropzone");
         numbers.forEach(num => this._bindNumberDrag(num));
         dropzones.forEach(zone => this._bindDropzoneEvents(zone));
+    }
+
+    _bindSkillDragEvents() {
+        const numbers = document.querySelectorAll("#statPoolSkill .stat-number");
+        const dropzones = document.querySelectorAll("#skill_distribution .stat-dropzone");
+        numbers.forEach(num => this._bindNumberDrag(num));
+        dropzones.forEach(zone => this._bindSkillDropzoneEvents(zone));
     }
 
     _bindNumberDrag(num) {
@@ -158,13 +163,13 @@ class CoCCharacterCreator {
     }
 
     _hideSkill(isProffesion) {
-        const labels = document.querySelectorAll('#skill_distribution .skill-item label');
+        const labels = document.querySelectorAll('#skill_distribution .stat-group label');
 
         labels.forEach(label => {
-            const item = label.closest('.skill-item');
+            const item = label.closest('.stat-group');
             if (!item) return;
 
-            const text = label.textContent;
+            const text = label.dataset.name;
             let isSelected;
             if (isProffesion) {
                 isSelected = this.selectedSkills.includes(text);
@@ -184,6 +189,37 @@ class CoCCharacterCreator {
             }
         });
     }
+
+    _bindSkillDropzoneEvents(zone) {
+        zone.addEventListener("dragover", e => {
+            e.preventDefault();
+            zone.classList.add("dragover");
+        });
+        zone.addEventListener("dragleave", () => {
+            zone.classList.remove("dragover");
+        });
+        zone.addEventListener("drop", e => {
+            e.preventDefault();
+            zone.classList.remove("dragover");
+            const value = e.dataTransfer.getData("text/plain");
+            const dragged = document.querySelector(".stat-number.dragging");
+            if (zone.dataset.filled === "true") {
+                const oldValue = zone.textContent.trim();
+                this._returnSkillNumberToPool(oldValue);
+            }
+            this._placeSkillValue(zone, value);
+            if (dragged && dragged.closest("#statPoolSkill")) {
+                dragged.remove();
+            } else if (dragged && dragged.closest(".stat-dropzone")) {
+                const oldZone = dragged.closest(".stat-dropzone");
+                oldZone.textContent = "Перетащите сюда";
+                oldZone.dataset.filled = "false";
+                const hiddenInput = oldZone.closest(".stat-group").querySelector("input[type=hidden]");
+                if (hiddenInput) hiddenInput.value = "";
+            }
+        });
+    }
+
 
     _populateSkillStatPool(numbers) {
         const pool = document.getElementById('statPoolSkill');
@@ -231,8 +267,36 @@ class CoCCharacterCreator {
         this._bindNumberDrag(numDiv);
     }
 
+    _placeSkillValue(zone, value) {
+        zone.textContent = value;
+        zone.dataset.filled = "true";
+        const hiddenInput = zone.closest(".stat-group").querySelector("input[type=hidden]");
+        if (hiddenInput) {
+            hiddenInput.value = value;
+            const skillKey = hiddenInput.name.match(/\[(.*?)\]/)?.[1];
+            if (skillKey) this.currentSkills[skillKey] = parseInt(value);
+        }
+        const numDiv = document.createElement("div");
+        numDiv.className = "stat-number";
+        numDiv.textContent = value;
+        numDiv.draggable = true;
+        zone.innerHTML = "";
+        zone.appendChild(numDiv);
+        this._bindNumberDrag(numDiv);
+    }
+
     _returnNumberToPool(value) {
         const pool = document.getElementById("statPool");
+        const numDiv = document.createElement("div");
+        numDiv.className = "stat-number";
+        numDiv.textContent = value;
+        numDiv.draggable = true;
+        pool.appendChild(numDiv);
+        this._bindNumberDrag(numDiv);
+    }
+
+    _returnSkillNumberToPool(value) {
+        const pool = document.getElementById("statPoolSkill");
         const numDiv = document.createElement("div");
         numDiv.className = "stat-number";
         numDiv.textContent = value;
@@ -396,10 +460,6 @@ class CoCCharacterCreator {
         }
         if (this.currentStep === 3 && this.eduImprovementCurrent !== this.eduImprovementMax) {
             alert("Пройдите проверки образования");
-            return false;
-        }
-        if (this.currentStep === 4 && this.skillPointProfessionalLess !== this.skillPointProfessional) {
-            alert("Потратьте все очки хобби");
             return false;
         }
         if (this.currentStep === 5 && this.luckTry !== 0) {
