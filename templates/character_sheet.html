@@ -197,31 +197,31 @@
                     <div class="weapon-fields-row">
                         <div class="weapon-field">
                             <label>Оружие</label>
-                            <div class="weapon-value">{{ weapon.name }}</div>
+                            <div class="weapon-value" id="{{ weapon.id }}-weapon-name">{{ weapon.name }}</div>
                         </div>
                         <div class="weapon-field">
                             <label>Навык</label>
-                            <div class="weapon-value">{{ weapon.skill }}</div>
+                            <div class="weapon-value" id="{{ weapon.id }}-weapon-skill">{{ weapon.skill }}</div>
                         </div>
                         <div class="weapon-field">
                             <label>Урон</label>
-                            <div class="weapon-value">{{ weapon.damage }}</div>
+                            <div class="weapon-value" id="{{ weapon.id }}-weapon-damage">{{ weapon.damage }}</div>
                         </div>
                         <div class="weapon-field">
                             <label>Дистанция</label>
-                            <div class="weapon-value">{{ weapon.distance }}</div>
+                            <div class="weapon-value" id="{{ weapon.id }}-weapon-distance">{{ weapon.distance }}</div>
                         </div>
                         <div class="weapon-field">
                             <label>Атак/раунд</label>
-                            <div class="weapon-value">{{ weapon.fire_rate }}</div>
+                            <div class="weapon-value" id="{{ weapon.id }}-weapon-fire_rate">{{ weapon.fire_rate }}</div>
                         </div>
                         <div class="weapon-field">
                             <label>Боезапас</label>
-                            <div class="weapon-value">{{ weapon.ammo }}</div>
+                            <div class="weapon-value" id="{{ weapon.id }}-weapon-ammo">{{ weapon.ammo }}</div>
                         </div>
                         <div class="weapon-field">
                             <label>Осечка</label>
-                            <div class="weapon-value">{{ weapon.misfire }}</div>
+                            <div class="weapon-value" id="{{ weapon.id }}-weapon-misfire">{{ weapon.misfire }}</div>
                         </div>
                     </div>
                     <button class="weapon-delete-btn" data-weapon-id="{{ weapon.id }}">×</button>

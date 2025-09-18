@@ -773,7 +773,6 @@ textarea:focus {
     position: sticky;
     top: 16px;
     z-index: 1000;
-    overflow: auto;
 }
 
 .stat-number {

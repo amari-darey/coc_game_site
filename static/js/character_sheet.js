@@ -281,34 +281,34 @@ document.addEventListener('DOMContentLoaded', function() {
         const equipment = document.getElementById('character-equipment').textContent.replace(/\s{2,}/g, "");
 
         const weapons = [];
-        const keys = ['name','skill','damage','distance','fire_rate','ammo','misfire'];
+        const keys = ['id', 'name','skill','damage','distance','fire_rate','ammo','misfire'];
         document.querySelectorAll('.weapon-card').forEach(card => {
-            const weapon = {};
+        const weapon = {};
+        const weaponId = card.getAttribute('data-weapon-id');
+        weapon.id = weaponId || '';
 
-            keys.forEach(key => {
-                const fieldEl = card.querySelector(`.weapon-value[data-field="${key}"]`);
-                if (fieldEl) {
-                    const input = fieldEl.querySelector('input');
-                    weapon[key] = input ? input.value.trim() : fieldEl.textContent.trim();
-                } else {
-                    weapon[key] = '';
-                }
-            });
+        keys.forEach(key => {
+            let value = '';
 
-            const valuesEls = Array.from(card.querySelectorAll('.weapon-value'));
-            if (valuesEls.length) {
-                valuesEls.forEach((el, idx) => {
-                    if (idx >= keys.length) return;
-                    const key = keys[idx];
-                    if (!weapon[key] || weapon[key] === '') {
-                        const input = el.querySelector('input');
-                        weapon[key] = input ? input.value.trim() : el.textContent.trim();
-                    }
-                });
+            const fieldByDataAttr = card.querySelector(`.weapon-value[data-field="${key}"]`);
+            if (fieldByDataAttr) {
+                const input = fieldByDataAttr.querySelector('input');
+                value = input ? input.value.trim() : fieldByDataAttr.textContent.trim();
             }
 
-            if (weapon.name) {
-                weapons.push(weapon);
+            if (!value) {
+                const fieldById = card.querySelector(`.weapon-value[id$="-weapon-${key}"]`);
+                if (fieldById) {
+                    const input = fieldById.querySelector('input');
+                    value = input ? input.value.trim() : fieldById.textContent.trim();
+                }
+            }
+
+            weapon[key] = value || '';
+        });
+
+        if (weapon.name && weapon.name.trim() !== '') {
+            weapons.push(weapon);
             }
         });
 
@@ -331,8 +331,6 @@ document.addEventListener('DOMContentLoaded', function() {
             equipment,
             weapons
         };
-
-        console.log(result);
 
         try {
             const response = await fetch('http://127.0.0.1:5100/character-save', {

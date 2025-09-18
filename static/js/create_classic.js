@@ -831,10 +831,11 @@ class CoCCharacterCreator {
             "equipment": this._getEquipment(),
             "weapons": [
                 {
-                    "name": "Brawl",
-                    "skill": "fighting_brawl", 
+                    "id": crypto.randomUUID(),
+                    "name": "Драка",
+                    "skill": "Ближ. бой -драка-", 
                     "damage": "1d3 + damage bonus", 
-                    "distance": "Touch", 
+                    "distance": "Прикосновения", 
                     "fire_rate": "1", 
                     "ammo": "-", 
                     "misfire": "-" 
