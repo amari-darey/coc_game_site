@@ -251,7 +251,8 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{{ url_for('static', filename='js/create_classic.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/character.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='js/character_classic_create.js') }}"></script>
 {% endblock %}
 
 

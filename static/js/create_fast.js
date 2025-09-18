@@ -1,79 +1,135 @@
 class CoCCharacterCreator {
     constructor() {
+        this._cacheElements();
         this._initializeProperties();
         this._bindEvents();
     }
 
-    _initializeProperties() {
-        this.currentStep = 1;
-        this.totalSteps = 6;
-        this.selectedSkills = [];
-        this.maxSkills = 8;
-        this.currentStats = this._initStats();
-        this.currentSkills = this._initSkills();
-        this.skillPointFlag = true;
-        this.eduImprovementCurrent = 0;
-        this.eduImprovementMax = 0;
-        this.luckValue = 0;
-        this.luckTry = 1;
-        this.luckPreviousValue = 0;
-        this.luckFlag = false;
-        this.ageModifierSpeed = 0;
-        this.baseStats = null;
-        this.agePenalties = { str: 0, dex: 0, con: 0 };
-        this.currentAgePenaltyTotal = 0;
+    // ---------- CACHED SELECTORS ----------
+    _cacheElements() {
+        const doc = document;
+        this.el = {
+            nextBtn: doc.getElementById("nextBtn"),
+            prevBtn: doc.getElementById("prevBtn"),
+            submitBtn: doc.getElementById("submitBtn"),
+            statPool: doc.getElementById("statPool"),
+            statPoolSkill: doc.getElementById("statPoolSkill"),
+            statTargets: doc.getElementById("statTargets"),
+            skillDistribution: doc.getElementById("skill_distribution"),
+            skillsCounter: doc.getElementById("skillsCounter"),
+            selectedSkillsList: doc.getElementById("selectedSkillsList"),
+            rollLuckBtn: doc.getElementById("rollLuck"),
+            rollEduButton: doc.getElementById("rollEduImprovement"),
+            applyAgePenaltyButton: doc.getElementById("applyAgePenalty"),
+            ageRange: doc.getElementById("ageRange"),
+            eduSection: doc.getElementById("eduImprovementSection"),
+            modifiersInfo: doc.getElementById("ageModifiersInfo"),
+            modifiersList: doc.getElementById("modifiersList"),
+            agePenaltyPopup: doc.getElementById("agePenaltyPopup"),
+            characterForm: doc.getElementById("characterForm"),
+            luckRollResult: doc.getElementById("luckRollResult"),
+            luckValueInput: doc.getElementById("luckValue"),
+            luckTryNum: doc.querySelector("#luckTryNum strong"),
+            eduImprovementResult: doc.getElementById("eduImprovementResult"),
+            currentEDU: doc.getElementById("currentEDU"),
+            agePenaltyTotal: doc.getElementById("agePenaltyTotal"),
+            agePenaltyRemaining: doc.getElementById("agePenaltyRemaining"),
+            progressFill: doc.getElementById("progressFill"),
+            steps: doc.querySelectorAll(".step")
+        };
     }
 
+    // ---------- STATE ----------
+    _initializeProperties() {
+        this.state = {
+            currentStep: 1,
+            totalSteps: 6,
+            selectedSkills: [],
+            maxSkills: 8,
+            currentStats: this._initStats(),
+            currentSkills: this._initSkills(),
+            skillPointFlag: true,
+            eduImprovementCurrent: 0,
+            eduImprovementMax: 0,
+            luckValue: 0,
+            luckTry: 1,
+            luckPreviousValue: 0,
+            luckFlag: false,
+            ageModifierSpeed: 0,
+            baseStats: null,
+            agePenalties: { str: 0, dex: 0, con: 0 },
+            currentAgePenaltyTotal: 0
+        };
+
+        this._draggingElement = null;
+
+        this.nextStepHandler = () => this.nextStep();
+    }
+
+    // ---------- INITS FROM DOM ----------
     _initStats() {
-        return Object.fromEntries(
-            [...document.querySelectorAll(".stats-grid input")]
-                .map(input => [input.id, parseInt(input.value)])
-        );
+        const inputs = [...document.querySelectorAll(".stats-grid input")];
+        return Object.fromEntries(inputs.map(input => [input.id, parseInt(input.value, 10) || 0]));
     }
 
     _initSkills() {
-        return Object.fromEntries(
-            [...document.querySelectorAll("[id^=skill_alloc_]")]
-                .map(input => [input.id.replace("skill_alloc_", ""), parseInt(input.value)])
-        );
+        const inputs = [...document.querySelectorAll("[id^=skill_alloc_]")];
+        return Object.fromEntries(inputs.map(input => [input.id.replace("skill_alloc_", ""), parseInt(input.value, 10) || 0]));
     }
 
+    // ---------- BIND EVENTS ----------
     _bindEvents() {
         this._bindNavigationEvents();
         this._bindSkillsEvents();
-        this._bindCharacteristicDragEvents();
-        this._bindSkillDragEvents();
+        this._bindDragDelegation();
+        this._bindDropzones();
         this._bindAgeEvents();
         this._bindLuck();
         this._bindFormSubmitEvent();
     }
 
-    _bindCharacteristicDragEvents() {
-        const numbers = document.querySelectorAll("#statPool .stat-number");
-        const dropzones = document.querySelectorAll("#statTargets .stat-dropzone");
-        numbers.forEach(num => this._bindNumberDrag(num));
-        dropzones.forEach(zone => this._bindDropzoneEvents(zone));
+    _bindNavigationEvents() {
+        const { nextBtn, prevBtn } = this.el;
+        if (nextBtn) nextBtn.addEventListener("click", this.nextStepHandler);
+        if (prevBtn) prevBtn.addEventListener("click", () => this.prevStep());
     }
 
-    _bindSkillDragEvents() {
-        const numbers = document.querySelectorAll("#statPoolSkill .stat-number");
-        const dropzones = document.querySelectorAll("#skill_distribution .stat-dropzone");
-        numbers.forEach(num => this._bindNumberDrag(num));
-        dropzones.forEach(zone => this._bindSkillDropzoneEvents(zone));
+    _bindSkillsEvents() {
+        document.querySelectorAll('input[name="skills"]').forEach(checkbox =>
+            checkbox.addEventListener("change", event => this._toggleSkill(event))
+        );
+        if (this.el.skillsCounter) this.el.skillsCounter.textContent = this.state.selectedSkills.length;
     }
 
-    _bindNumberDrag(num) {
-        num.addEventListener("dragstart", e => {
-            e.dataTransfer.setData("text/plain", num.textContent);
-            e.dataTransfer.effectAllowed = "move";
-            num.classList.add("dragging");
+    _bindDragDelegation() {
+        document.addEventListener("dragstart", e => {
+            const target = e.target;
+            if (!target || !target.classList || !target.classList.contains("stat-number")) return;
+            this._draggingElement = target;
+            try {
+                e.dataTransfer.setData("text/plain", target.textContent);
+                e.dataTransfer.effectAllowed = "move";
+            } catch (err) {
+            }
+            target.classList.add("dragging");
         });
-        num.addEventListener("dragend", () => {
-            num.classList.remove("dragging");
+
+        document.addEventListener("dragend", e => {
+            const target = e.target;
+            if (target && target.classList) target.classList.remove("dragging");
+            this._draggingElement = null;
         });
     }
 
-    _bindDropzoneEvents(zone) {
+    _bindDropzones() {
+        const charDropzones = document.querySelectorAll("#statTargets .stat-dropzone");
+        charDropzones.forEach(zone => this._attachDropzone(zone, false));
+
+        const skillDropzones = document.querySelectorAll("#skill_distribution .stat-dropzone");
+        skillDropzones.forEach(zone => this._attachDropzone(zone, true));
+    }
+
+    _attachDropzone(zone, isSkill) {
         zone.addEventListener("dragover", e => {
             e.preventDefault();
             zone.classList.add("dragover");
@@ -84,70 +140,53 @@ class CoCCharacterCreator {
         zone.addEventListener("drop", e => {
             e.preventDefault();
             zone.classList.remove("dragover");
-            const value = e.dataTransfer.getData("text/plain");
-            const dragged = document.querySelector(".stat-number.dragging");
+            const value = (e.dataTransfer && e.dataTransfer.getData("text/plain")) || (this._draggingElement && this._draggingElement.textContent);
+            const dragged = this._draggingElement || document.querySelector(".stat-number.dragging");
+
             if (zone.dataset.filled === "true") {
                 const oldValue = zone.textContent.trim();
-                this._returnNumberToPool(oldValue);
+                if (isSkill) this._returnSkillNumberToPool(oldValue);
+                else this._returnNumberToPool(oldValue);
             }
-            this._placeStatValue(zone, value);
+
+            if (isSkill) this._placeSkillValue(zone, value);
+            else this._placeStatValue(zone, value);
+
             if (dragged && dragged.closest("#statPool")) {
+                dragged.remove();
+            } else if (dragged && dragged.closest("#statPoolSkill")) {
                 dragged.remove();
             } else if (dragged && dragged.closest(".stat-dropzone")) {
                 const oldZone = dragged.closest(".stat-dropzone");
-                oldZone.textContent = "Перетащите сюда";
-                oldZone.dataset.filled = "false";
-                const hiddenInput = oldZone.closest(".stat-group").querySelector("input[type=hidden]");
-                if (hiddenInput) hiddenInput.value = "";
+                if (oldZone) {
+                    oldZone.textContent = "Перетащите сюда";
+                    oldZone.dataset.filled = "false";
+                    const hiddenInput = oldZone.closest(".stat-group")?.querySelector("input[type=hidden]");
+                    if (hiddenInput) hiddenInput.value = "";
+                }
+            }
+            if (this._draggingElement) {
+                this._draggingElement.classList.remove("dragging");
+                this._draggingElement = null;
             }
         });
     }
 
-    _bindNavigationEvents() {
-        const nextButton = document.getElementById("nextBtn");
-        const prevButton = document.getElementById("prevBtn");
-        this.nextStepHandler = () => this.nextStep();
-        nextButton.addEventListener("click", this.nextStepHandler);
-        prevButton.addEventListener("click", () => this.prevStep());
+    _ensureDraggable(numDiv) {
+        if (!numDiv) return;
+        numDiv.draggable = true;
     }
 
-    _bindSkillsEvents() {
-        document.querySelectorAll('input[name="skills"]').forEach(checkbox =>
-            checkbox.addEventListener("change", event => this._toggleSkill(event))
-        );
-    }
-
-    _bindAgeEvents() {
-        const ageRange = document.getElementById("ageRange");
-        const rollEduButton = document.getElementById("rollEduImprovement");
-        const applyAgePenaltyButton = document.getElementById("applyAgePenalty");
-        ageRange.addEventListener("change", event => this._handleAgeChange(event));
-        if (rollEduButton) {
-            rollEduButton.addEventListener("click", () => this._rollEduImprovement());
-        }
-        document.querySelectorAll('#agePenaltyPopup .stat-btn').forEach(button => {
-            button.addEventListener('click', event => this._changeAgePenalty(event));
-        });
-        applyAgePenaltyButton.addEventListener("click", () => this._applyAgePenalty());
-    }
-
-    _bindLuck() {
-        document.getElementById("rollLuck").addEventListener("click", () => this._rollLuck())
-    }
-
-    _bindFormSubmitEvent() {
-        document.getElementById("characterForm").addEventListener("submit", event => this._handleSubmit(event));
-    }
-
+    // ---------- NAV/STEP HANDLERS ----------
     _handleStepFour() {
         this._hideSkill(true);
-        this._populateSkillStatPool([70,60,60,50,50,50,40,40,40]);
+        this._populateSkillStatPool([70, 60, 60, 50, 50, 50, 40, 40, 40]);
         this._redirectNextButton();
     }
 
     _handlerStepFourAlt() {
         const poolNumbers = document.querySelectorAll("#statPoolSkill .stat-number");
-        const filledDropzones = document.querySelectorAll(".stat-dropzone[data-filled='true']");
+        const filledDropzones = document.querySelectorAll("#skill_distribution .stat-dropzone[data-filled='true']");
         if (poolNumbers.length > 0 || filledDropzones.length < 9) {
             alert("Распределите все числа по профессиональным навыкам");
             return false;
@@ -158,19 +197,22 @@ class CoCCharacterCreator {
     }
 
     _redirectNextButton() {
+        const nextBtn = this.el.nextBtn;
+        if (!nextBtn) return;
         this.alternativeNextHandler = () => this._handlerStepFourAlt();
-        document.getElementById("nextBtn").removeEventListener("click", this.nextStepHandler);
-        document.getElementById("nextBtn").addEventListener("click", this.alternativeNextHandler);
+        nextBtn.removeEventListener("click", this.nextStepHandler);
+        nextBtn.addEventListener("click", this.alternativeNextHandler);
     }
 
     _undoRedirectNextButton() {
-        document.getElementById("nextBtn").removeEventListener("click", this.alternativeNextHandler);
-        document.getElementById("nextBtn").addEventListener("click", this.nextStepHandler);
+        const nextBtn = this.el.nextBtn;
+        if (!nextBtn || !this.alternativeNextHandler) return;
+        nextBtn.removeEventListener("click", this.alternativeNextHandler);
+        nextBtn.addEventListener("click", this.nextStepHandler);
     }
 
     _hideSkill(isProffesion) {
         const labels = document.querySelectorAll('#skill_distribution .stat-group label');
-
         labels.forEach(label => {
             const item = label.closest('.stat-group');
             if (!item) return;
@@ -178,11 +220,10 @@ class CoCCharacterCreator {
             const text = label.dataset.name;
             let isSelected;
             if (isProffesion) {
-                isSelected = this.selectedSkills.includes(text);
+                isSelected = this.state.selectedSkills.includes(text);
                 if (text == "Средства") isSelected = true;
-            }
-            else {
-                isSelected = !this.selectedSkills.includes(text);
+            } else {
+                isSelected = !this.state.selectedSkills.includes(text);
                 if (text == "Средства") isSelected = false;
             }
 
@@ -196,39 +237,9 @@ class CoCCharacterCreator {
         });
     }
 
-    _bindSkillDropzoneEvents(zone) {
-        zone.addEventListener("dragover", e => {
-            e.preventDefault();
-            zone.classList.add("dragover");
-        });
-        zone.addEventListener("dragleave", () => {
-            zone.classList.remove("dragover");
-        });
-        zone.addEventListener("drop", e => {
-            e.preventDefault();
-            zone.classList.remove("dragover");
-            const value = e.dataTransfer.getData("text/plain");
-            const dragged = document.querySelector(".stat-number.dragging");
-            if (zone.dataset.filled === "true") {
-                const oldValue = zone.textContent.trim();
-                this._returnSkillNumberToPool(oldValue);
-            }
-            this._placeSkillValue(zone, value);
-            if (dragged && dragged.closest("#statPoolSkill")) {
-                dragged.remove();
-            } else if (dragged && dragged.closest(".stat-dropzone")) {
-                const oldZone = dragged.closest(".stat-dropzone");
-                oldZone.textContent = "Перетащите сюда";
-                oldZone.dataset.filled = "false";
-                const hiddenInput = oldZone.closest(".stat-group").querySelector("input[type=hidden]");
-                if (hiddenInput) hiddenInput.value = "";
-            }
-        });
-    }
-
-
+    // ---------- POOL / PLACEMENT ----------
     _populateSkillStatPool(numbers) {
-        const pool = document.getElementById('statPoolSkill');
+        const pool = this.el.statPoolSkill;
         if (!pool) return;
 
         if (!Array.isArray(numbers)) {
@@ -237,6 +248,7 @@ class CoCCharacterCreator {
         }
 
         pool.innerHTML = '';
+        const frag = document.createDocumentFragment();
 
         numbers.forEach(num => {
             const text = String(num).trim();
@@ -244,165 +256,192 @@ class CoCCharacterCreator {
 
             const numDiv = document.createElement('div');
             numDiv.className = 'stat-number';
-            numDiv.draggable = true;
             numDiv.textContent = text;
-            pool.appendChild(numDiv);
-
-            if (typeof this._bindNumberDrag === 'function') {
-                this._bindNumberDrag(numDiv);
-            }
+            this._ensureDraggable(numDiv);
+            frag.appendChild(numDiv);
         });
+
+        pool.appendChild(frag);
     }
 
     _placeStatValue(zone, value) {
-        zone.textContent = value;
-        zone.classList.remove("dragging");
+        if (!zone) return;
         zone.dataset.filled = "true";
-        const hiddenInput = zone.closest(".stat-group").querySelector("input[type=hidden]");
+
+        const hiddenInput = zone.closest(".stat-group")?.querySelector("input[type=hidden]");
         if (hiddenInput) {
             hiddenInput.value = value;
             const statKey = hiddenInput.name.match(/\[(.*?)\]/)?.[1];
-            if (statKey) this.currentStats[statKey] = parseInt(value);
+            if (statKey) this.state.currentStats[statKey] = parseInt(value, 10);
         }
+
+        zone.innerHTML = "";
         const numDiv = document.createElement("div");
         numDiv.className = "stat-number";
         numDiv.textContent = value;
-        numDiv.draggable = true;
-        zone.innerHTML = "";
+        this._ensureDraggable(numDiv);
         zone.appendChild(numDiv);
-        this._bindNumberDrag(numDiv);
     }
 
     _placeSkillValue(zone, value) {
-        zone.textContent = value;
+        if (!zone) return;
         zone.dataset.filled = "true";
-        const hiddenInput = zone.closest(".stat-group").querySelector("input[type=hidden]");
+
+        const hiddenInput = zone.closest(".stat-group")?.querySelector("input[type=hidden]");
         if (hiddenInput) {
             hiddenInput.value = value;
             const skillKey = hiddenInput.name.match(/\[(.*?)\]/)?.[1];
-            if (skillKey) this.currentSkills[skillKey] = parseInt(value);
+            if (skillKey) this.state.currentSkills[skillKey] = parseInt(value, 10);
         }
+
+        zone.innerHTML = "";
         const numDiv = document.createElement("div");
         numDiv.className = "stat-number";
         numDiv.textContent = value;
-        numDiv.draggable = true;
-        zone.innerHTML = "";
+        this._ensureDraggable(numDiv);
         zone.appendChild(numDiv);
-        this._bindNumberDrag(numDiv);
     }
 
     _returnNumberToPool(value) {
-        const pool = document.getElementById("statPool");
+        const pool = this.el.statPool;
+        if (!pool) return;
         const numDiv = document.createElement("div");
         numDiv.className = "stat-number";
         numDiv.textContent = value;
-        numDiv.draggable = true;
+        this._ensureDraggable(numDiv);
         pool.appendChild(numDiv);
-        this._bindNumberDrag(numDiv);
     }
 
     _returnSkillNumberToPool(value) {
-        const pool = document.getElementById("statPoolSkill");
+        const pool = this.el.statPoolSkill;
+        if (!pool) return;
         const numDiv = document.createElement("div");
         numDiv.className = "stat-number";
         numDiv.textContent = value;
-        numDiv.draggable = true;
+        this._ensureDraggable(numDiv);
         pool.appendChild(numDiv);
-        this._bindNumberDrag(numDiv);
     }
 
+    // ---------- SKILL SELECTION UI ----------
     _toggleSkill(event) {
         const { checked, value, dataset } = event.target;
+        const name = dataset.name;
         if (checked) {
-            if (this.selectedSkills.length >= this.maxSkills) {
+            if (this.state.selectedSkills.length >= this.state.maxSkills) {
                 event.target.checked = false;
-                alert(`Можно выбрать только ${this.maxSkills} навыков`);
+                alert(`Можно выбрать только ${this.state.maxSkills} навыков`);
                 return;
             }
-            this.selectedSkills.push(dataset.name);
+            this.state.selectedSkills.push(name);
         } else {
-            this.selectedSkills = this.selectedSkills.filter(skill => skill !== dataset.name);
+            this.state.selectedSkills = this.state.selectedSkills.filter(skill => skill !== name);
         }
-        document.getElementById("skillsCounter").textContent = this.selectedSkills.length;
+        if (this.el.skillsCounter) this.el.skillsCounter.textContent = String(this.state.selectedSkills.length);
         this._renderSelectedSkills();
     }
 
     _renderSelectedSkills() {
-        const list = document.getElementById("selectedSkillsList");
-        list.innerHTML = this.selectedSkills.map(skill => 
-            `<div class="selected-skill">
-                ${skill} <button type="button" class="remove-skill" data-skill="${skill}">×</button>
-             </div>`
-        ).join("");
-        list.querySelectorAll(".remove-skill").forEach(button => {
-            button.addEventListener("click", event => {
-                const skill = event.target.dataset.skill;
-                const checkbox = document.querySelector(`input[name="skills"][value="${skill}"]`);
-                if (checkbox) {
-                    checkbox.checked = false;
-                }
-                this.selectedSkills = this.selectedSkills.filter(s => s !== skill);
-                document.getElementById("skillsCounter").textContent = this.selectedSkills.length;
+        const list = this.el.selectedSkillsList;
+        if (!list) return;
+        list.innerHTML = "";
+
+        this.state.selectedSkills.forEach(skill => {
+            const wrapper = document.createElement("div");
+            wrapper.className = "selected-skill";
+
+            const textNode = document.createElement("span");
+            textNode.textContent = skill;
+
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "remove-skill";
+            btn.dataset.skill = skill;
+            btn.textContent = "×";
+            btn.addEventListener("click", (event) => {
+                const skillName = event.target.dataset.skill;
+                const checkbox = document.querySelector(`input[name="skills"][value="${skillName}"]`);
+                if (checkbox) checkbox.checked = false;
+                this.state.selectedSkills = this.state.selectedSkills.filter(s => s !== skillName);
+                if (this.el.skillsCounter) this.el.skillsCounter.textContent = String(this.state.selectedSkills.length);
                 this._renderSelectedSkills();
             });
+
+            wrapper.appendChild(textNode);
+            wrapper.appendChild(btn);
+            list.appendChild(wrapper);
         });
     }
 
+    // ---------- STEP 5: LUCK ----------
     _handleStepFive() {
         const age = document.getElementById("ageRange");
-        const luckTryElement = document.querySelector("#luckTryNum strong");
-        if (age.value === "15_19") {
-            this.luckTry = 2;
-            this.luckFlag = true;
+        const luckTryElement = this.el.luckTryNum;
+        if (age && age.value === "15_19") {
+            this.state.luckTry = 2;
+            this.state.luckFlag = true;
         }
-        luckTryElement.textContent = this.luckTry
+        if (luckTryElement) luckTryElement.textContent = this.state.luckTry;
+    }
+
+    _bindLuck() {
+        if (this.el.rollLuckBtn) this.el.rollLuckBtn.addEventListener("click", () => this._rollLuck());
     }
 
     _rollLuck() {
-        if (this.luckTry <= 0) return;
+        if (this.state.luckTry <= 0) return;
         const dice1 = Math.floor(Math.random() * 6) + 1;
         const dice2 = Math.floor(Math.random() * 6) + 1;
         const dice3 = Math.floor(Math.random() * 6) + 1;
         const total = (dice1 + dice2 + dice3) * 5;
-        const resultElement = document.getElementById("luckRollResult");
-        const luckTryElement = document.querySelector("#luckTryNum strong");
-        resultElement.innerHTML = `
-            <div class="luck-dice">
-                <div class="dice-value">${dice1}</div>
-                <div class="dice-value">${dice2}</div>
-                <div class="dice-value">${dice3}</div>
-            </div>
-            <div class="luck-total">Удача: ${total}</div>
-        `;
-        this.luckValue = total;
-        document.getElementById("luckValue").value = total;
-        this.luckTry--;
-        luckTryElement.textContent = this.luckTry;
-        if (this.luckFlag) {
-            if (this.luckPreviousValue > total) {
-                this.luckValue = this.luckPreviousValue;
-                document.getElementById("luckValue").value = this.luckPreviousValue;
-                resultElement.innerHTML = `
-                    <div class="luck-dice">
-                        <div class="dice-value">${dice1}</div>
-                        <div class="dice-value">${dice2}</div>
-                        <div class="dice-value">${dice3}</div>
-                    </div>
-                    <div class="luck-total">Удача: ${total}</div>
-                    <p class="success">Прошлое значение ${this.luckPreviousValue} было больше, останется оно.</p>
-                `;
+
+        const resultElement = this.el.luckRollResult;
+        const luckTryElement = this.el.luckTryNum;
+
+        if (resultElement) {
+            resultElement.innerHTML = `
+                <div class="luck-dice">
+                    <div class="dice-value">${dice1}</div>
+                    <div class="dice-value">${dice2}</div>
+                    <div class="dice-value">${dice3}</div>
+                </div>
+                <div class="luck-total">Удача: ${total}</div>
+            `;
+        }
+
+        this.state.luckValue = total;
+        if (this.el.luckValueInput) this.el.luckValueInput.value = String(total);
+
+        this.state.luckTry--;
+        if (luckTryElement) luckTryElement.textContent = this.state.luckTry;
+
+        if (this.state.luckFlag) {
+            if (this.state.luckPreviousValue > total) {
+                this.state.luckValue = this.state.luckPreviousValue;
+                if (this.el.luckValueInput) this.el.luckValueInput.value = String(this.state.luckPreviousValue);
+                if (resultElement) {
+                    resultElement.innerHTML = `
+                        <div class="luck-dice">
+                            <div class="dice-value">${dice1}</div>
+                            <div class="dice-value">${dice2}</div>
+                            <div class="dice-value">${dice3}</div>
+                        </div>
+                        <div class="luck-total">Удача: ${total}</div>
+                        <p class="success">Прошлое значение ${this.state.luckPreviousValue} было больше, останется оно.</p>
+                    `;
+                }
             }
-            this.luckPreviousValue = total;
+            this.state.luckPreviousValue = total;
         }
     }
 
+    // ---------- NAVIGATION: next/prev ----------
     nextStep() {
         if (!this._validateCurrentStep()) return;
         this._toggleCurrentStep(false);
-        this.currentStep++;
-        if (this.currentStep === 3) this._updateAgeStats();
-        if (this.currentStep === 4) this._handleStepFour();
-        if (this.currentStep === 5) this._handleStepFive();
+        this.state.currentStep++;
+        if (this.state.currentStep === 3) this._updateAgeStats();
+        if (this.state.currentStep === 4) this._handleStepFour();
+        if (this.state.currentStep === 5) this._handleStepFive();
         this._updateProgress();
         this._toggleCurrentStep(true);
         this._updateNavigationButtons();
@@ -410,36 +449,40 @@ class CoCCharacterCreator {
 
     prevStep() {
         this._toggleCurrentStep(false);
-        this.currentStep--;
+        this.state.currentStep--;
         this._updateProgress();
         this._toggleCurrentStep(true);
-        this._updateNavigationButtons(); 
+        this._updateNavigationButtons();
     }
 
     _toggleCurrentStep(show) {
-        document.querySelector(`.form-step[data-step="${this.currentStep}"]`)
-            .classList.toggle("active", show);
+        const el = document.querySelector(`.form-step[data-step="${this.state.currentStep}"]`);
+        if (el) el.classList.toggle("active", show);
     }
 
     _updateProgress() {
-        const progressPercentage = (this.currentStep - 1) / (this.totalSteps - 1) * 100;
-        document.getElementById("progressFill").style.width = `${progressPercentage}%`;
-        document.querySelectorAll(".step").forEach((step, index) => {
-            step.classList.toggle("active", index + 1 <= this.currentStep);
-        });
+        const progressPercentage = (this.state.currentStep - 1) / (this.state.totalSteps - 1) * 100;
+        if (this.el.progressFill) this.el.progressFill.style.width = `${progressPercentage}%`;
+        if (this.el.steps && this.el.steps.length) {
+            this.el.steps.forEach((step, index) => {
+                step.classList.toggle("active", index + 1 <= this.state.currentStep);
+            });
+        }
     }
 
     _updateNavigationButtons() {
-        const prevButton = document.getElementById("prevBtn");
-        const nextButton = document.getElementById("nextBtn");
-        const submitButton = document.getElementById("submitBtn");
-        prevButton.disabled = this.currentStep === 1;
-        nextButton.style.display = this.currentStep === this.totalSteps ? "none" : "block";
-        submitButton.style.display = this.currentStep === this.totalSteps ? "block" : "none";
+        const prevButton = this.el.prevBtn;
+        const nextButton = this.el.nextBtn;
+        const submitButton = this.el.submitBtn;
+        if (prevButton) prevButton.disabled = this.state.currentStep === 1;
+        if (nextButton) nextButton.style.display = this.state.currentStep === this.state.totalSteps ? "none" : "block";
+        if (submitButton) submitButton.style.display = this.state.currentStep === this.state.totalSteps ? "block" : "none";
     }
 
+    // ---------- VALIDATION ----------
     _validateCurrentStep() {
-        const currentStepElement = document.querySelector(`.form-step[data-step="${this.currentStep}"]`);
+        const currentStepElement = document.querySelector(`.form-step[data-step="${this.state.currentStep}"]`);
+        if (!currentStepElement) return true;
         const requiredInputs = currentStepElement.querySelectorAll("input[required], select[required]");
         for (let input of requiredInputs) {
             if (!input.value.trim()) {
@@ -448,11 +491,11 @@ class CoCCharacterCreator {
                 return false;
             }
         }
-        if (this.currentStep === 1 && this.selectedSkills.length !== this.maxSkills) {
-            alert(`Выберите ровно ${this.maxSkills} навыков`);
+        if (this.state.currentStep === 1 && this.state.selectedSkills.length !== this.state.maxSkills) {
+            alert(`Выберите ровно ${this.state.maxSkills} навыков`);
             return false;
         }
-        if (this.currentStep === 2) {
+        if (this.state.currentStep === 2) {
             const poolNumbers = document.querySelectorAll("#statPool .stat-number");
             const filledDropzones = document.querySelectorAll(".stat-dropzone[data-filled='true']");
             if (poolNumbers.length > 0 || filledDropzones.length < 8) {
@@ -460,15 +503,15 @@ class CoCCharacterCreator {
                 return false;
             }
         }
-        if (this.currentStep === 3 && document.getElementById('ageRange').selectedIndex === 0) {
+        if (this.state.currentStep === 3 && document.getElementById('ageRange')?.selectedIndex === 0) {
             alert("Выберите возраст");
             return false;
         }
-        if (this.currentStep === 3 && this.eduImprovementCurrent !== this.eduImprovementMax) {
+        if (this.state.currentStep === 3 && this.state.eduImprovementCurrent !== this.state.eduImprovementMax) {
             alert("Пройдите проверки образования");
             return false;
         }
-        if (this.currentStep === 4) {
+        if (this.state.currentStep === 4) {
             const poolNumbers = document.querySelectorAll("#statPoolSkill .stat-number");
             const filledDropzones = document.querySelectorAll(".stat-dropzone[data-filled='true']");
             if (poolNumbers.length > 0 || filledDropzones.length < 4) {
@@ -476,18 +519,29 @@ class CoCCharacterCreator {
                 return false;
             }
         }
-        if (this.currentStep === 5 && this.luckTry !== 0) {
-            alert(this.luckTry);
+        if (this.state.currentStep === 5 && this.state.luckTry !== 0) {
+            alert(this.state.luckTry);
             return false;
         }
         return true;
     }
 
+    // ---------- AGE / EDU ----------
+    _bindAgeEvents() {
+        const { ageRange, rollEduButton, applyAgePenaltyButton } = this.el;
+        if (ageRange) ageRange.addEventListener("change", event => this._handleAgeChange(event));
+        if (rollEduButton) rollEduButton.addEventListener("click", () => this._rollEduImprovement());
+        document.querySelectorAll('#agePenaltyPopup .stat-btn').forEach(button => {
+            button.addEventListener('click', event => this._changeAgePenalty(event));
+        });
+        if (applyAgePenaltyButton) applyAgePenaltyButton.addEventListener("click", () => this._applyAgePenalty());
+    }
+
     _handleAgeChange(event) {
         const age = event.target.value;
-        const modifiersInfo = document.getElementById("ageModifiersInfo");
-        const eduSection = document.getElementById("eduImprovementSection");
-        const modifiersList = document.getElementById("modifiersList");
+        const modifiersInfo = this.el.modifiersInfo;
+        const eduSection = this.el.eduSection;
+        const modifiersList = this.el.modifiersList;
         const MIN_STAT = 1;
         const MAX_STAT = 90;
         const clamp = (value) => Math.min(MAX_STAT, Math.max(MIN_STAT, value));
@@ -501,75 +555,83 @@ class CoCCharacterCreator {
             "80_plus":{ penalties: 80, edu: +25, pow: +5, text: "СИЛ/ЛВК/ТЕЛ -80 всего; ОБР +25, МОЩ +5", improvement: 4, speed: 5 }
         };
         const modifiers = AGE_MODIFIERS[age];
-        this.ageModifierSpeed = modifiers?.speed || 0;
-        modifiersInfo.style.display = "block";
-        modifiersList.innerHTML = modifiers?.text ? `<p>${modifiers.text}</p>` : "";
-        if (!this.baseStats) {
-            this.baseStats = JSON.parse(JSON.stringify(this.currentStats));
+        this.state.ageModifierSpeed = modifiers?.speed || 0;
+        if (modifiersInfo) modifiersInfo.style.display = "block";
+        if (modifiersList) modifiersList.innerHTML = modifiers?.text ? `<p>${modifiers.text}</p>` : "";
+
+        if (!this.state.baseStats) {
+            this.state.baseStats = JSON.parse(JSON.stringify(this.state.currentStats));
         }
-        this.currentStats = JSON.parse(JSON.stringify(this.baseStats));
-        this.agePenalties = { str: 0, dex: 0, con: 0 };
-        eduSection.style.display = ["15_19", "20_39"].includes(age) ? "none" : "block";
-        if (eduSection.style.display === "block") {
-            document.getElementById("currentEDU").textContent = this.currentStats.edu;
+        // restore from base and then apply modifiers
+        this.state.currentStats = JSON.parse(JSON.stringify(this.state.baseStats));
+        this.state.agePenalties = { str: 0, dex: 0, con: 0 };
+
+        if (eduSection) eduSection.style.display = ["15_19", "20_39"].includes(age) ? "none" : "block";
+        if (eduSection && eduSection.style.display === "block" && this.el.currentEDU) {
+            this.el.currentEDU.textContent = this.state.currentStats.edu;
         }
+
         if (modifiers) {
             for (const key in modifiers) {
                 if (["text", "improvement", "speed", "penalties"].includes(key)) continue;
                 const delta = modifiers[key];
-                if (typeof delta === "number" && this.currentStats.hasOwnProperty(key)) {
-                    this.currentStats[key] = clamp(this.currentStats[key] + delta);
+                if (typeof delta === "number" && this.state.currentStats.hasOwnProperty(key)) {
+                    this.state.currentStats[key] = clamp(this.state.currentStats[key] + delta);
                 }
             }
-            this.eduImprovementMax = modifiers.improvement || 0;
-            this.eduImprovementCurrent = 0;
+            this.state.eduImprovementMax = modifiers.improvement || 0;
+            this.state.eduImprovementCurrent = 0;
         } else {
-            this.eduImprovementMax = 0;
+            this.state.eduImprovementMax = 0;
         }
-        this.currentAgePenaltyTotal = modifiers?.penalties || 0;
-        if (this.currentAgePenaltyTotal > 0) {
-            document.getElementById("agePenaltyTotal").textContent = this.currentAgePenaltyTotal;
-            document.getElementById("agePenaltyRemaining").textContent = this.currentAgePenaltyTotal;
-            document.getElementById("penalty_str").value = 0;
-            document.getElementById("penalty_dex").value = 0;
-            document.getElementById("penalty_con").value = 0;
-            document.getElementById("agePenaltyPopup").style.display = "flex";
+
+        this.state.currentAgePenaltyTotal = modifiers?.penalties || 0;
+        if (this.state.currentAgePenaltyTotal > 0) {
+            if (this.el.agePenaltyTotal) this.el.agePenaltyTotal.textContent = String(this.state.currentAgePenaltyTotal);
+            if (this.el.agePenaltyRemaining) this.el.agePenaltyRemaining.textContent = String(this.state.currentAgePenaltyTotal);
+            const penaltyStr = document.getElementById("penalty_str");
+            const penaltyDex = document.getElementById("penalty_dex");
+            const penaltyCon = document.getElementById("penalty_con");
+            if (penaltyStr) penaltyStr.value = 0;
+            if (penaltyDex) penaltyDex.value = 0;
+            if (penaltyCon) penaltyCon.value = 0;
+            if (this.el.agePenaltyPopup) this.el.agePenaltyPopup.style.display = "flex";
         }
+
         this._updateAgeStats();
     }
 
     _applyAgePenalty() {
-        const total = this.currentAgePenaltyTotal;
-        const strengthPenalty = parseInt(document.getElementById("penalty_str").value);
-        const dexterityPenalty = parseInt(document.getElementById("penalty_dex").value);
-        const constitutionPenalty = parseInt(document.getElementById("penalty_con").value);
+        const total = this.state.currentAgePenaltyTotal;
+        const strengthPenalty = parseInt(document.getElementById("penalty_str").value, 10) || 0;
+        const dexterityPenalty = parseInt(document.getElementById("penalty_dex").value, 10) || 0;
+        const constitutionPenalty = parseInt(document.getElementById("penalty_con").value, 10) || 0;
         if (strengthPenalty + dexterityPenalty + constitutionPenalty !== total) {
             alert("Нужно распределить все штрафные очки!");
             return;
         }
         const clamp = value => Math.max(1, value);
-        this.currentStats.str = clamp(this.currentStats.str - strengthPenalty);
-        this.currentStats.dex = clamp(this.currentStats.dex - dexterityPenalty);
-        this.currentStats.con = clamp(this.currentStats.con - constitutionPenalty);
-        this.agePenalties = { str: strengthPenalty, dex: dexterityPenalty, con: constitutionPenalty };
-        document.getElementById("agePenaltyPopup").style.display = "none";
+        this.state.currentStats.str = clamp(this.state.currentStats.str - strengthPenalty);
+        this.state.currentStats.dex = clamp(this.state.currentStats.dex - dexterityPenalty);
+        this.state.currentStats.con = clamp(this.state.currentStats.con - constitutionPenalty);
+        this.state.agePenalties = { str: strengthPenalty, dex: dexterityPenalty, con: constitutionPenalty };
+        if (this.el.agePenaltyPopup) this.el.agePenaltyPopup.style.display = "none";
         this._updateAgeStats();
     }
 
     _changeAgePenalty(event) {
         const { stat, action } = event.target.dataset;
         const input = document.getElementById(stat);
-        let value = parseInt(input.value);
-        const strengthPenalty = parseInt(document.getElementById("penalty_str").value);
-        const dexterityPenalty = parseInt(document.getElementById("penalty_dex").value);
-        const constitutionPenalty = parseInt(document.getElementById("penalty_con").value);
+        if (!input) return;
+        let value = parseInt(input.value, 10) || 0;
+        const strengthPenalty = parseInt(document.getElementById("penalty_str").value, 10) || 0;
+        const dexterityPenalty = parseInt(document.getElementById("penalty_dex").value, 10) || 0;
+        const constitutionPenalty = parseInt(document.getElementById("penalty_con").value, 10) || 0;
         const used = strengthPenalty + dexterityPenalty + constitutionPenalty;
-        const remaining = this.currentAgePenaltyTotal - used;
+        const remaining = this.state.currentAgePenaltyTotal - used;
         const operations = {
             increase: () => {
-                if (remaining > 0) {
-                    value += 1;
-                }
+                if (remaining > 0) value += 1;
             },
             "increase+": () => {
                 if (remaining > 0) {
@@ -578,73 +640,72 @@ class CoCCharacterCreator {
                 }
             },
             decrease: () => {
-                if (value > 0) {
-                    value -= 1;
-                }
+                if (value > 0) value -= 1;
             }
         };
-        if (operations[action]) {
-            operations[action]();
-        }
+        if (operations[action]) operations[action]();
         input.value = value;
-        const newUsed = 
-            parseInt(document.getElementById("penalty_str").value) +
-            parseInt(document.getElementById("penalty_dex").value) +
-            parseInt(document.getElementById("penalty_con").value);
-        document.getElementById("agePenaltyRemaining").textContent = this.currentAgePenaltyTotal - newUsed;
+        const newUsed =
+            parseInt(document.getElementById("penalty_str").value, 10) +
+            parseInt(document.getElementById("penalty_dex").value, 10) +
+            parseInt(document.getElementById("penalty_con").value, 10);
+        if (this.el.agePenaltyRemaining) this.el.agePenaltyRemaining.textContent = String(this.state.currentAgePenaltyTotal - newUsed);
     }
 
     _rollEduImprovement() {
-        if (this.eduImprovementCurrent >= this.eduImprovementMax) return;
+        if (this.state.eduImprovementCurrent >= this.state.eduImprovementMax) return;
         const roll = Math.floor(Math.random() * 100) + 1;
-        const currentEducation = this.currentStats.edu;
-        const resultElement = document.getElementById("eduImprovementResult");
-        resultElement.innerHTML = `<p>Бросок: ${roll} (нужно > ${currentEducation})</p>`;
+        const currentEducation = this.state.currentStats.edu;
+        const resultElement = this.el.eduImprovementResult;
+        if (resultElement) resultElement.innerHTML = `<p>Бросок: ${roll} (нужно > ${currentEducation})</p>`;
         if (roll > currentEducation) {
             const increment = Math.floor(Math.random() * 10) + 1;
-            this.currentStats.edu = Math.min(currentEducation + increment, 99);
-            resultElement.innerHTML += `<p class="success">Успех! ОБР +${increment}, теперь ${this.currentStats.edu}</p>`;
+            this.state.currentStats.edu = Math.min(currentEducation + increment, 99);
+            if (resultElement) resultElement.innerHTML += `<p class="success">Успех! ОБР +${increment}, теперь ${this.state.currentStats.edu}</p>`;
         } else {
-            resultElement.innerHTML += `<p class="failure">Провал! ОБР остаётся ${currentEducation}</p>`;
+            if (resultElement) resultElement.innerHTML += `<p class="failure">Провал! ОБР остаётся ${currentEducation}</p>`;
         }
         this._updateAgeStats();
-        document.getElementById("currentEDU").textContent = this.currentStats.edu;
-        this.eduImprovementCurrent++;
-        document.getElementById("eduImprovement").textContent = this.eduImprovementMax - this.eduImprovementCurrent;
+        if (this.el.currentEDU) this.el.currentEDU.textContent = String(this.state.currentStats.edu);
+        this.state.eduImprovementCurrent++;
+        const eduRemainingEl = document.getElementById("eduImprovement");
+        if (eduRemainingEl) eduRemainingEl.textContent = String(this.state.eduImprovementMax - this.state.eduImprovementCurrent);
     }
 
     _updateAgeStats() {
-        Object.entries(this.currentStats).forEach(([stat, value]) => {
+        Object.entries(this.state.currentStats).forEach(([stat, value]) => {
             const element = document.getElementById(`ageStep${stat}`);
-            if (element) element.textContent = value;
+            if (element) element.textContent = String(value);
         });
-        document.getElementById("eduImprovement").textContent = this.eduImprovementMax - this.eduImprovementCurrent;
+        const eduRemainingEl = document.getElementById("eduImprovement");
+        if (eduRemainingEl) eduRemainingEl.textContent = String(this.state.eduImprovementMax - this.state.eduImprovementCurrent);
     }
 
+    // ---------- SIMPLE GETTERS ----------
     _getSanity() {
-        return this.currentStats.pow;
+        return this.state.currentStats.pow;
     }
 
     _getHitPoints() {
-        return Math.floor((this.currentStats.siz + this.currentStats.con) / 10);
+        return Math.floor((this.state.currentStats.siz + this.state.currentStats.con) / 10);
     }
 
     _getMagicPoints() {
-        return Math.floor(this.currentStats.pow / 5);
+        return Math.floor(this.state.currentStats.pow / 5);
     }
 
     _getSpeed() {
-        if (this.currentStats.dex > this.currentStats.con && this.currentStats.str > this.currentStats.con) {
-            return 9 - this.ageModifierSpeed;
-        } else if (this.currentStats.dex >= this.currentStats.con || this.currentStats.str >= this.currentStats.con) {
-            return 8 - this.ageModifierSpeed;
+        if (this.state.currentStats.dex > this.state.currentStats.con && this.state.currentStats.str > this.state.currentStats.con) {
+            return 9 - this.state.ageModifierSpeed;
+        } else if (this.state.currentStats.dex >= this.state.currentStats.con || this.state.currentStats.str >= this.state.currentStats.con) {
+            return 8 - this.state.ageModifierSpeed;
         } else {
-            return 7 - this.ageModifierSpeed;
+            return 7 - this.state.ageModifierSpeed;
         }
     }
 
     _getDamageBonus() {
-        const value = this.currentStats.str + this.currentStats.con;
+        const value = this.state.currentStats.str + this.state.currentStats.con;
         if (value <= 1) {
             return { damageBonus: 0, damageReduction: 0 };
         } else if (value <= 64) {
@@ -665,39 +726,46 @@ class CoCCharacterCreator {
     }
 
     _getCharacterName() {
-        return document.getElementById("charName").value;
+        return document.getElementById("charName")?.value || "";
     }
 
     _getAge() {
-        return document.getElementById("ageRange").value;
+        return document.getElementById("ageRange")?.value || "";
     }
 
     _getAppearance() {
-        return document.getElementById("appearanceDesc").value;
+        return document.getElementById("appearanceDesc")?.value || "";
     }
 
     _getBackstory() {
-        return document.getElementById("backstory").value;
+        return document.getElementById("backstory")?.value || "";
     }
 
     _getEquipment() {
-        return document.getElementById("equipment").value;
+        return document.getElementById("equipment")?.value || "";
     }
 
+    _calculateStartingStats() {
+        this.state.currentSkills.dodge = Math.floor(this.state.currentStats.dex / 2);
+        this.state.currentSkills.language_own = this.state.currentStats.edu;
+    }
+
+    // ---------- SUBMIT ----------
     async _handleSubmit(event) {
         event.preventDefault();
+        this._calculateStartingStats()
         const result = {
             "name": this._getCharacterName(),
             "age": this._getAge(),
-            "proffesion": document.getElementById("profession").value,
-            "stat": this.currentStats,
-            "skill": this.currentSkills,
-            "proffesionalSkill": this.selectedSkills,
+            "proffesion": document.getElementById("profession")?.value || "",
+            "stat": this.state.currentStats,
+            "skill": this.state.currentSkills,
+            "proffesionalSkill": this.state.selectedSkills,
             "sanity": this._getSanity(),
             "hp": this._getHitPoints(),
             "mp": this._getMagicPoints(),
             "speed": this._getSpeed(),
-            "luck": this.luckValue,
+            "luck": this.state.luckValue,
             "damageUp": this._getDamageBonus().damageBonus,
             "damageReduction": this._getDamageBonus().damageReduction,
             "appearance": this._getAppearance(),
@@ -705,15 +773,15 @@ class CoCCharacterCreator {
             "equipment": this._getEquipment(),
             "weapons": [
                 {
-                    "id": crypto.randomUUID(),
+                    "id": (typeof crypto !== "undefined" && crypto.randomUUID) ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
                     "name": "Драка",
-                    "skill": "Ближ. бой -драка-", 
-                    "damage": "1d3 + damage bonus", 
-                    "distance": "Прикосновения", 
-                    "fire_rate": "1", 
-                    "ammo": "-", 
-                    "misfire": "-" 
-                }, 
+                    "skill": "Ближ. бой -драка-",
+                    "damage": "1d3 + damage bonus",
+                    "distance": "Прикосновения",
+                    "fire_rate": "1",
+                    "ammo": "-",
+                    "misfire": "-"
+                },
             ]
         };
         try {
@@ -733,7 +801,14 @@ class CoCCharacterCreator {
             console.error('Ошибка отправки:', error);
         }
     }
+
+    _bindFormSubmitEvent() {
+        if (this.el.characterForm) {
+            this.el.characterForm.addEventListener("submit", event => this._handleSubmit(event));
+        }
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => new CoCCharacterCreator());
+
 
