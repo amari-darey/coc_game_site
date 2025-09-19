@@ -206,7 +206,7 @@ class CharacterCreatorFast extends CharacterCreator {
             hiddenInput.value = value;
             const skillKey = hiddenInput.name.match(/\[(.*?)\]/)?.[1];
             if (this.skillFlag) {
-                if (skillKey) this.currentSkills[skillKey] += parseInt(value, 10);
+                if (skillKey) this.currentSkills[skillKey] += Math.min(100, parseInt(value, 10));
             }
             else {
                 if (skillKey) this.currentSkills[skillKey] = parseInt(value, 10);
