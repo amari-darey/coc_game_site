@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session, make_response
+from flask_socketio import SocketIO
 import uuid
 from character import Character
 from constant import *
@@ -6,6 +7,7 @@ from constant import *
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key'
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 users = {}
 
@@ -90,4 +92,4 @@ def character_save():
 
 
 if __name__ == "__main__":
-    app.run("0.0.0.0", 5100)
+    socketio.run(app, host="0.0.0.0", port=5100, use_reloader=False, log_output=True)
