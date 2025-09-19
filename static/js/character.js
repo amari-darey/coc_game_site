@@ -18,6 +18,8 @@ export class CharacterCreator {
         this.pointsLeft = this.totalPoints;
         this.currentStats = this._initStats();
         this.currentSkills = this._initSkills();
+        console.log(this.currentStats)
+        console.log(this.currentSkills)
 
         // Очки умений
         this.skillPointProfessional = 0;
@@ -44,15 +46,15 @@ export class CharacterCreator {
 
     _initStats() {
         return Object.fromEntries(
-            [...document.querySelectorAll(".stats-grid input")]
-                .map(input => [input.id, parseInt(input.value)])
+            [...document.getElementById("js-characteristic").querySelectorAll("div")]
+                .map(input => [input.dataset.name.toLowerCase(), parseInt(input.dataset.base)])
         );
     }
 
     _initSkills() {
         return Object.fromEntries(
-            [...document.querySelectorAll("[id^=skill_alloc_]")]
-                .map(input => [input.id.replace("skill_alloc_", ""), parseInt(input.value)])
+            [...document.getElementById("js-stats").querySelectorAll("div")]
+                .map(input => [input.dataset.name.toLowerCase(), parseInt(input.dataset.base)])
         );
     }
 
@@ -383,11 +385,13 @@ export class CharacterCreator {
     // НАВИГАЦИЯ
     nextStep() {
         if (!this._validateCurrentStep()) return;
+        console.log(this.currentStats)
         
         this._toggleCurrentStep(false);
         this.currentStep++;
         
         if (this.currentStep === 3) this._updateAgeStats();
+        if (this.currentStep === 4) this._calculateStartingStats();
         if (this.currentStep === 4) this._handleStepFour();
         if (this.currentStep === 5) this._handleStepFive();
         
@@ -457,11 +461,17 @@ export class CharacterCreator {
         }
         
         if (this.currentStep === 5 && this.luckTry !== 0) {
-            alert(this.luckTry);
+            alert("Пройдите все проверки удачи");
             return false;
         }
         
         return true;
+    }
+
+    // Вспомогательные
+    _calculateStartingStats() {
+        this.currentSkills.dodge = Math.floor(this.currentStats.dex / 2);
+        this.currentSkills.language_own = this.currentStats.edu;
     }
 
     // ГЕТЕРЫ

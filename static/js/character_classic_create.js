@@ -87,7 +87,6 @@ class CharacterCreatorClassic extends CharacterCreator {
     // ШАГ 4
 
     _handleStepFour() {
-        this._calculateStartingStats();
         this._disableNonProfessionSkills();
         this._redirectNextButton();
 
@@ -156,14 +155,6 @@ class CharacterCreatorClassic extends CharacterCreator {
         document.getElementById("nextBtn").removeEventListener("click", this.alternativeNextHandler);
         document.getElementById("nextBtn").addEventListener("click", this.nextStepHandler);
         this.nextStep();
-    }
-
-    _calculateStartingStats() {
-        this.currentSkills.dodge = Math.floor(this.currentStats.dex / 2);
-        this.currentSkills.language_own = this.currentStats.edu;
-        
-        document.getElementById("skill_alloc_dodge").value = this.currentSkills.dodge;
-        document.getElementById("skill_alloc_language_own").value = this.currentSkills.language_own;
     }
 
     _showStepFourModal(formula) {
@@ -272,6 +263,21 @@ class CharacterCreatorClassic extends CharacterCreator {
         this.currentSkills[skill] = value;
         input.value = value;
         skillPointsLeftElement.textContent = this.skillPointProfessional - this.skillPointProfessionalLess;
+    }
+
+    // Валидация
+    _validateCurrentStep() {
+        const result = super._validateCurrentStep()
+        if (!result) return result;
+        if (this.currentStep === 2 && this.pointsLeft !== 0) {
+            alert("Распределите все очки характеристик");
+            return false;
+        }
+        if (this.currentStep === 4 && this.skillPointProfessionalLess !== this.skillPointProfessional) {
+            alert("Потратьте все очки хобби");
+            return false;
+        }
+        return result
     }
 }
 

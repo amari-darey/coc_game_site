@@ -233,6 +233,29 @@ class CharacterCreatorFast extends CharacterCreator {
         this._ensureDraggable(numDiv);
         pool.appendChild(numDiv);
     }
+
+    // Валидация
+    _validateCurrentStep() {
+        const result = super._validateCurrentStep()
+        if (!result) return result;
+        if (this.currentStep === 2) {
+            const poolNumbers = document.querySelectorAll("#statPool .stat-number");
+            const filledDropzones = document.querySelectorAll(".stat-dropzone[data-filled='true']");
+            if (poolNumbers.length > 0 || filledDropzones.length < 8) {
+                alert("Распределите все числа по характеристикам");
+                return false;
+            }
+        }
+        if (this.currentStep === 4) {
+            const poolNumbers = document.querySelectorAll("#statPoolSkill .stat-number");
+            const filledDropzones = document.querySelectorAll(".stat-dropzone[data-filled='true']");
+            if (poolNumbers.length > 0 || filledDropzones.length < 4) {
+                alert("Распределите все числа по навыкам хобби");
+                return false;
+            }
+        }
+        return result
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => new CharacterCreatorFast());

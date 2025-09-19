@@ -89,6 +89,18 @@
                 {% endfor %}
             </div>
         </div>
+        <div id="js-characteristic" hidden>
+            {% for ch in context.characteristic %}
+                <div data-name="{{ ch.eng }}" data-base="{{ ch.base }}" hidden></div>
+            {% endfor %}
+        </div>
+        <div id="js-stats" hidden>
+            {% for skills in context.skills %}
+                {% for skill in context.skills[skills] %}
+                    <div data-name="{{ skill.id }}" data-base="{{ skill.base }}" hidden></div>
+                {% endfor %}
+            {% endfor %}
+        </div>
 
         <!-- Шаг 2: Характеристики -->
         <div class="form-step" data-step="2">
