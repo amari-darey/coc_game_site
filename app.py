@@ -68,7 +68,7 @@ def character():
         context = users[token].get_all_stats()
     else:
         context = False
-    return render_template('character_sheet_redaction.html', 
+    return render_template('character_sheet_editing.html', 
                          context=context,
                          editable=True,
                          SKILLS=SKILLS,

@@ -392,6 +392,7 @@ export class CharacterCreator {
         
         if (this.currentStep === 3) this._updateAgeStats();
         if (this.currentStep === 4) this._calculateStartingStats();
+        if (this.currentStep === 4) this._setDodgeAndLangOwn();
         if (this.currentStep === 4) this._handleStepFour();
         if (this.currentStep === 5) this._handleStepFive();
         
@@ -472,6 +473,16 @@ export class CharacterCreator {
     _calculateStartingStats() {
         this.currentSkills.dodge = Math.floor(this.currentStats.dex / 2);
         this.currentSkills.language_own = this.currentStats.edu;
+    }
+
+    _setDodgeAndLangOwn() {
+        const dodge =  document.querySelector('label[data-name="Уклонение"]')
+        const languageOwn =  document.querySelector('label[data-name="Языки -Родной-"]')
+
+        if (dodge && languageOwn) {
+            dodge.textContent = `Уклонение (${this.currentStats.dex / 2})`
+            languageOwn.textContent = `Языки -Родной- (${this.currentStats.edu})`
+        }
     }
 
     // ГЕТЕРЫ
