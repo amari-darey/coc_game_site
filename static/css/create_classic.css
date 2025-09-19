@@ -182,6 +182,14 @@ textarea:focus {
     box-shadow: 0 0 10px rgba(138, 75, 158, 0.5);
 }
 
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0px 1000px #2a234b inset !important;
+    -webkit-text-fill-color: #e8e6e3 !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
 /* НАВЫКИ (контейнер, категории, элементы) */
 .skills-container {
     display: grid;
