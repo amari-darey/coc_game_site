@@ -5,6 +5,7 @@ class CharacterCreatorFast extends CharacterCreator {
     constructor() {
         super();
         this._draggingElement = null;
+        this.skillFlag = false
     }
 
     _bindEvents() {
@@ -117,6 +118,7 @@ class CharacterCreatorFast extends CharacterCreator {
     }
 
     _undoRedirectNextButton() {
+        this.skillFlag = true
         const nextBtn = document.getElementById("nextBtn");
         if (!nextBtn || !this.alternativeNextHandler) return;
         nextBtn.removeEventListener("click", this.alternativeNextHandler);
@@ -203,7 +205,12 @@ class CharacterCreatorFast extends CharacterCreator {
         if (hiddenInput) {
             hiddenInput.value = value;
             const skillKey = hiddenInput.name.match(/\[(.*?)\]/)?.[1];
-            if (skillKey) this.currentSkills[skillKey] = parseInt(value, 10);
+            if (this.skillFlag) {
+                if (skillKey) this.currentSkills[skillKey] += parseInt(value, 10);
+            }
+            else {
+                if (skillKey) this.currentSkills[skillKey] = parseInt(value, 10);
+            }
         }
 
         zone.innerHTML = "";
