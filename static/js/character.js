@@ -303,7 +303,7 @@ export class CharacterCreator {
         if (roll > currentEducation) {
             const increment = Math.floor(Math.random() * 10) + 1;
             this.currentStats.edu = Math.min(currentEducation + increment, 99);
-            document.getElementById("edu").value = this.currentStats.edu;
+            document.getElementById("ageStepedu").value = this.currentStats.edu;
             
             resultElement.innerHTML += `<p class="success">Успех! ОБР +${increment}, теперь ${this.currentStats.edu}</p>`;
         } else {
@@ -480,7 +480,7 @@ export class CharacterCreator {
         const languageOwn =  document.querySelector('label[data-name="Языки -Родной-"]')
 
         if (dodge && languageOwn) {
-            dodge.textContent = `Уклонение (${this.currentStats.dex / 2})`
+            dodge.textContent = `Уклонение (${Math.floor(this.currentStats.dex / 2)})`
             languageOwn.textContent = `Языки -Родной- (${this.currentStats.edu})`
         }
     }
