@@ -54,7 +54,9 @@ class CharacterCreatorFast extends CharacterCreator {
             e.preventDefault();
             zone.classList.remove("dragover");
             const value = (e.dataTransfer && e.dataTransfer.getData("text/plain")) || (this._draggingElement && this._draggingElement.textContent);
+            if (!(typeof value == "string" && Number.isFinite(Number(value)))) return false;
             const dragged = this._draggingElement || document.querySelector(".stat-number.dragging");
+            if (!dragged?.dataset?.dragallowed) return;
 
             if (zone.dataset.filled === "true") {
                 const oldValue = zone.textContent.trim();
@@ -171,6 +173,7 @@ class CharacterCreatorFast extends CharacterCreator {
             const numDiv = document.createElement('div');
             numDiv.className = 'stat-number';
             numDiv.textContent = text;
+            numDiv.dataset.dragallowed = 'true'
             this._ensureDraggable(numDiv);
             frag.appendChild(numDiv);
         });

@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function changeCell(cell) {
+        // in progress to write
         console.log(cell.dataset.item)
         console.log(cell.textContent)
     }
@@ -32,7 +33,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const con = parseInt(document.getElementById("CON_stat").textContent)
         const str = parseInt(document.getElementById("STR_stat").textContent)
         const value = str + con;
-        console.log(value)
         
         if (value <= 1) {
             return { damageBonus: 0, damageReduction: 0 };

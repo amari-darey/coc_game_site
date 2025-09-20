@@ -18,8 +18,6 @@ export class CharacterCreator {
         this.pointsLeft = this.totalPoints;
         this.currentStats = this._initStats();
         this.currentSkills = this._initSkills();
-        console.log(this.currentStats)
-        console.log(this.currentSkills)
 
         // Очки умений
         this.skillPointProfessional = 0;
@@ -385,7 +383,6 @@ export class CharacterCreator {
     // НАВИГАЦИЯ
     nextStep() {
         if (!this._validateCurrentStep()) return;
-        console.log(this.currentStats)
         
         this._toggleCurrentStep(false);
         this.currentStep++;
