@@ -83,7 +83,6 @@ header{padding:30px 0;text-align:center;position:relative}
 .cthulhu-link .cthulhu-svg circle{
   transition: fill .18s ease, filter .18s ease, transform .18s ease;
   transform-origin: 50% 50%;
-  will-change: transform, filter;
 }
 
 .cthulhu-link:hover .cthulhu-svg circle,

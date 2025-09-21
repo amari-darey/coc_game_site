@@ -6,6 +6,8 @@ class CharacterCreatorFast extends CharacterCreator {
         super();
         this._draggingElement = null;
         this.skillFlag = false
+        this.skillFirstNumFlag = true;
+        this.skillSecondNumFlag = true;
     }
 
     _bindEvents() {
@@ -95,7 +97,10 @@ class CharacterCreatorFast extends CharacterCreator {
     // ШАГ 4
     _handleStepFour() {
         this._hideSkill(true);
-        this._populateSkillStatPool([70, 60, 60, 50, 50, 50, 40, 40, 40]);
+        if (this.skillFirstNumFlag) {
+            this._populateSkillStatPool([70, 60, 60, 50, 50, 50, 40, 40, 40]);
+            this.skillFirstNumFlag = false
+        };
         this._redirectNextButton();
     }
 
@@ -107,7 +112,10 @@ class CharacterCreatorFast extends CharacterCreator {
             return false;
         }
         this._hideSkill(false);
-        this._populateSkillStatPool([20, 20, 20, 20]);
+        if (this.skillSecondNumFlag) {
+            this._populateSkillStatPool([20, 20, 20, 20]);
+            this.skillSecondNumFlag = false
+        };
         this._undoRedirectNextButton();
     }
 
