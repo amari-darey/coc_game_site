@@ -96,8 +96,8 @@ class CharacterCreatorFast extends CharacterCreator {
 
     // ШАГ 4
     _handleStepFour() {
-        this._hideSkill(true);
         if (this.skillFirstNumFlag) {
+            this._hideSkill(this.skillFirstNumFlag);
             this._populateSkillStatPool([70, 60, 60, 50, 50, 50, 40, 40, 40]);
             this.skillFirstNumFlag = false
         };
@@ -204,6 +204,7 @@ class CharacterCreatorFast extends CharacterCreator {
         const numDiv = document.createElement("div");
         numDiv.className = "stat-number";
         numDiv.textContent = value;
+        numDiv.dataset.dragallowed = 'true';
         this._ensureDraggable(numDiv);
         zone.appendChild(numDiv);
     }
@@ -228,6 +229,7 @@ class CharacterCreatorFast extends CharacterCreator {
         const numDiv = document.createElement("div");
         numDiv.className = "stat-number";
         numDiv.textContent = value;
+        numDiv.dataset.dragallowed = 'true';
         this._ensureDraggable(numDiv);
         zone.appendChild(numDiv);
     }
@@ -238,6 +240,7 @@ class CharacterCreatorFast extends CharacterCreator {
         const numDiv = document.createElement("div");
         numDiv.className = "stat-number";
         numDiv.textContent = value;
+        numDiv.dataset.dragallowed = 'true';
         this._ensureDraggable(numDiv);
         pool.appendChild(numDiv);
     }
@@ -248,6 +251,7 @@ class CharacterCreatorFast extends CharacterCreator {
         const numDiv = document.createElement("div");
         numDiv.className = "stat-number";
         numDiv.textContent = value;
+        numDiv.dataset.dragallowed = 'true';
         this._ensureDraggable(numDiv);
         pool.appendChild(numDiv);
     }

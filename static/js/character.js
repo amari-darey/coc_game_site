@@ -399,6 +399,7 @@ export class CharacterCreator {
     }
 
     prevStep() {
+        if (this.currentStep === 4) this._undoRedirectNextButton();
         this._toggleCurrentStep(false);
         this.currentStep--;
         this._updateProgress();
@@ -432,6 +433,7 @@ export class CharacterCreator {
 
     // ВАЛИДАЦИЯ
     _validateCurrentStep() {
+        console.log(this.currentStep)
         const currentStepElement = document.querySelector(`.form-step[data-step="${this.currentStep}"]`);
         const requiredInputs = currentStepElement.querySelectorAll("input[required], select[required]");
         
