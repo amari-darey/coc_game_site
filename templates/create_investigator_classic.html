@@ -208,21 +208,23 @@
 
                 <div class="skills-container-skill" id="skill_distribution">
                     {% for category, skills in context.skills.items() %}
-                    <div class="skill-category-skill">
-                        <h3>{{ category }}</h3>
-                        {% for skill in skills %}
-                            <div class="skill-item">
-                                <label for="skill_alloc_{{ skill.id }}">{{ skill.rus }}</label>
-                                <div class="stat-control">
-                                    <button type="button" class="stat-btn" data-skill="{{ skill.id }}" data-skill-rus="{{ skill.rus }}" data-action="skillDecrease">-</button>
-                                    <input type="number" id="skill_alloc_{{ skill.id }}" name="skillsAllocation[{{ skill.id }}]"
-                                           value="{{ skill.base if skill.base is number else 0 }}" min="0" max="100" readonly>
-                                    <button type="button" class="stat-btn" data-skill="{{ skill.id }}" data-skill-rus="{{ skill.rus }}" data-action="skillIncrease">+</button>
-                                    <button type="button" class="stat-btn" data-skill="{{ skill.id }}" data-skill-rus="{{ skill.rus }}" data-action="skillIncrease+">+10</button>
-                                </div>
+                        {% if category != 'Мифы Ктулху' %}
+                            <div class="skill-category-skill">
+                                <h3>{{ category }}</h3>
+                                {% for skill in skills %}
+                                    <div class="skill-item">
+                                        <label for="skill_alloc_{{ skill.id }}">{{ skill.rus }}</label>
+                                        <div class="stat-control">
+                                            <button type="button" class="stat-btn" data-skill="{{ skill.id }}" data-skill-rus="{{ skill.rus }}" data-action="skillDecrease">-</button>
+                                            <input type="number" id="skill_alloc_{{ skill.id }}" name="skillsAllocation[{{ skill.id }}]"
+                                                   value="{{ skill.base if skill.base is number else 0 }}" min="0" max="100" readonly>
+                                            <button type="button" class="stat-btn" data-skill="{{ skill.id }}" data-skill-rus="{{ skill.rus }}" data-action="skillIncrease">+</button>
+                                            <button type="button" class="stat-btn" data-skill="{{ skill.id }}" data-skill-rus="{{ skill.rus }}" data-action="skillIncrease+">+10</button>
+                                        </div>
+                                    </div>
+                                {% endfor %}
                             </div>
-                        {% endfor %}
-                    </div>
+                        {% endif %} 
                     {% endfor %}
                 </div>
             </div>

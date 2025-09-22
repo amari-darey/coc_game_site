@@ -202,16 +202,18 @@
 
                 <div class="skills-container-skill-fast" id="skill_distribution">
                     {% for category, skills in context.skills.items() %}
-                    <div class="skill-category-skill">
-                        <h3>{{ category }}</h3>
-                        {% for skill in skills %}
-                            <div class="stat-group droppable" data-stat="{{ skill.id }}">
-                                <label data-name="{{ skill.rus }}">{{ skill.rus }} ({{ skill.base }})</label>
-                                <div class="stat-dropzone">Перетащите сюда</div>
-                                <input type="hidden" name="skill[{{ skill.id }}]" value="">
+                        {% if category != 'Мифы Ктулху' %}
+                            <div class="skill-category-skill">
+                                <h3>{{ category }}</h3>
+                                {% for skill in skills %}
+                                    <div class="stat-group droppable" data-stat="{{ skill.id }}">
+                                        <label data-name="{{ skill.rus }}">{{ skill.rus }} ({{ skill.base }})</label>
+                                        <div class="stat-dropzone">Перетащите сюда</div>
+                                        <input type="hidden" name="skill[{{ skill.id }}]" value="">
+                                    </div>
+                                {% endfor %}
                             </div>
-                        {% endfor %}
-                    </div>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>
