@@ -405,6 +405,9 @@ export class CharacterCreator {
         this._updateProgress();
         this._toggleCurrentStep(true);
         this._updateNavigationButtons();
+        if (this.currentStep === 4) {
+        this._handleStepFour();
+    }
     }
 
     _toggleCurrentStep(show) {
@@ -583,6 +586,7 @@ export class CharacterCreator {
                 }, 
             ]
         };
+        console.log(result)
 
         try {
             const response = await fetch('http://127.0.0.1:5100/character', {

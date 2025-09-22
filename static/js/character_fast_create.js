@@ -96,6 +96,7 @@ class CharacterCreatorFast extends CharacterCreator {
 
     // ШАГ 4
     _handleStepFour() {
+        this._resetSkills()
         if (this.skillFirstNumFlag) {
             this._hideSkill(this.skillFirstNumFlag);
             this._populateSkillStatPool([70, 60, 60, 50, 50, 50, 40, 40, 40]);
@@ -104,7 +105,32 @@ class CharacterCreatorFast extends CharacterCreator {
         this._redirectNextButton();
     }
 
+    _resetSkills() {
+        this.currentSkills = this._initSkills();
+        this.skillFirstNumFlag = true;
+        this.skillSecondNumFlag = true;
+        
+        const filledDropzones = document.querySelectorAll('#skill_distribution .stat-dropzone[data-filled="true"]');
+        filledDropzones.forEach(zone => {
+            const numberElement = zone.querySelector('.stat-number');
+            if (numberElement) {
+                const value = numberElement.textContent;
+                this._returnSkillNumberToPool(value);
+
+                zone.innerHTML = 'Перетащите сюда';
+                zone.dataset.filled = 'false';
+            }
+        });
+
+        document.querySelectorAll('#skill_distribution input[type="hidden"]').forEach(input => {
+            const base = parseInt(input.dataset.base) || 0;
+            input.value = base;
+        });
+    }
+
     _handlerStepFourAlt() {
+        this._calculateStartingStats()
+        
         const poolNumbers = document.querySelectorAll("#statPoolSkill .stat-number");
         const filledDropzones = document.querySelectorAll("#skill_distribution .stat-dropzone[data-filled='true']");
         if (poolNumbers.length > 0 || filledDropzones.length < 9) {

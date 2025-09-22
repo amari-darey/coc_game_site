@@ -87,6 +87,13 @@ class CharacterCreatorClassic extends CharacterCreator {
     // ШАГ 4
 
     _handleStepFour() {
+        this.skillPointProfessional = 0;
+        this.skillPointProfessionalLess = 0;
+        this.skillPointFlag = true;
+        this.skillPointChoice = "edu";
+
+        this._resetSkills()
+        this._calculateStartingStats()
         this._disableNonProfessionSkills();
         this._redirectNextButton();
 
@@ -97,6 +104,14 @@ class CharacterCreatorClassic extends CharacterCreator {
         } else {
             this._showStepFourModal(formula);
         }
+    }
+
+    _resetSkills() {
+        this.currentSkills = this._initSkills();
+        document.querySelectorAll('input[name^="skillsAllocation"]').forEach(input => {
+            const base = parseInt(input.dataset.base) || 0;
+            input.value = base;
+        });
     }
 
     _disableNonProfessionSkills() {
@@ -152,6 +167,7 @@ class CharacterCreatorClassic extends CharacterCreator {
     }
 
     _undoRedirectNextButton() {
+        console.log("_undoRedirectNextButton")
         document.getElementById("nextBtn").removeEventListener("click", this.alternativeNextHandler);
         document.getElementById("nextBtn").addEventListener("click", this.nextStepHandler);
         this.nextStep();
