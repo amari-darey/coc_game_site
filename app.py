@@ -87,7 +87,6 @@ def character_save():
         data = request.get_json()
         if data:
             users[token] = Character(data)
-
     return redirect("/")
 
 

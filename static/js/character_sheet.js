@@ -281,35 +281,35 @@ document.addEventListener('DOMContentLoaded', function() {
         const equipment = document.getElementById('character-equipment').textContent.replace(/\s{2,}/g, "");
 
         const weapons = [];
-        const keys = ['id', 'name','skill','damage','distance','fire_rate','ammo','misfire'];
+        const keys = ['name','skill','damage','distance','fire_rate','ammo','misfire'];
         document.querySelectorAll('.weapon-card').forEach(card => {
-        const weapon = {};
-        const weaponId = card.getAttribute('data-weapon-id');
-        weapon.id = weaponId || '';
+            const weapon = {};
+            const weaponId = card.dataset.weaponid;
+            weapon.id = weaponId || '';
 
-        keys.forEach(key => {
-            let value = '';
+            keys.forEach(key => {
+                let value = '';
 
-            const fieldByDataAttr = card.querySelector(`.weapon-value[data-field="${key}"]`);
-            if (fieldByDataAttr) {
-                const input = fieldByDataAttr.querySelector('input');
-                value = input ? input.value.trim() : fieldByDataAttr.textContent.trim();
-            }
-
-            if (!value) {
-                const fieldById = card.querySelector(`.weapon-value[id$="-weapon-${key}"]`);
-                if (fieldById) {
-                    const input = fieldById.querySelector('input');
-                    value = input ? input.value.trim() : fieldById.textContent.trim();
+                const fieldByDataAttr = card.querySelector(`.weapon-value[data-field="${key}"]`);
+                if (fieldByDataAttr) {
+                    const input = fieldByDataAttr.querySelector('input');
+                    value = input ? input.value.trim() : fieldByDataAttr.textContent.trim();
                 }
-            }
 
-            weapon[key] = value || '';
-        });
+                if (!value) {
+                    const fieldById = card.querySelector(`.weapon-value[id$="-weapon-${key}"]`);
+                    if (fieldById) {
+                        const input = fieldById.querySelector('input');
+                        value = input ? input.value.trim() : fieldById.textContent.trim();
+                    }
+                }
 
-        if (weapon.name && weapon.name.trim() !== '') {
-            weapons.push(weapon);
-            }
+                weapon[key] = value || '';
+            });
+
+            if (weapon.name && weapon.name.trim() !== '') {
+                weapons.push(weapon);
+                }
         });
 
         const result = {

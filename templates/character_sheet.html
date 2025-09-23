@@ -59,17 +59,17 @@
             <div class="characteristics-right">
                 <div class="track-block">
                     <label>Здоровье</label>
-                    <div class="track-grid hp-grid">
+                    <div class="track-grid hp-grid" id="hp-grid">
                         {% for i in range(0,21) %}
-                            <div class="track-cell {% if i == context.hp %}active{% endif %}" data-item="hp">{{ i }}</div>
+                            <div class="track-cell{% if i == context.hp %} active{% endif %}" data-item="hp">{{ i }}</div>
                         {% endfor %}
                     </div>
                 </div>
                 <div class="track-block">
                     <label>Пункты магии</label>
-                    <div class="track-grid mp-grid">
+                    <div class="track-grid mp-grid" id="mp-grid">
                         {% for i in range(0,25) %}
-                            <div class="track-cell {% if i == context.mp %}active{% endif %}" data-item="mp">{{ i }}</div>
+                            <div class="track-cell{% if i == context.mp %} active{% endif %}" data-item="mp">{{ i }}</div>
                         {% endfor %}
                     </div>
                 </div>
@@ -80,18 +80,18 @@
         <div class="line-two">
             <div class="track-block">
                 <label>Удача</label>
-                <div class="track-grid">
+                <div class="track-grid" id="luck-grid">
                     {% for i in range(0,100) %}
-                        <div class="track-cell {% if i == context.luck %}active{% endif %}" data-item="luck">{{ i }}</div>
+                        <div class="track-cell{% if i == context.luck %} active{% endif %}" data-item="luck">{{ i }}</div>
                     {% endfor %}
                 </div>
             </div>
 
             <div class="track-block">
                 <label>Рассудок</label>
-                <div class="track-grid">
+                <div class="track-grid" id="sanity-grid">
                     {% for i in range(0,100) %}
-                        <div class="track-cell {% if i == context.sanity %}active{% endif %}" data-item="sanity">{{ i }}</div>
+                        <div class="track-cell{% if i == context.sanity %} active{% endif %}" data-item="sanity">{{ i }}</div>
                     {% endfor %}
                 </div>
             </div>
@@ -170,7 +170,7 @@
         <div class="weapons-container" id="weapons-container">
             {% if context and context.weapons %}
                 {% for weapon in context.weapons %}
-                <div class="weapon-card" data-weapon-id="{{ weapon.id }}">
+                <div class="weapon-card" data-weaponId="{{ weapon.id }}">
                     <div class="weapon-fields-row">
                         <div class="weapon-field">
                             <label>Оружие</label>
