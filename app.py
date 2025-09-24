@@ -69,7 +69,7 @@ def character():
     if isinstance(users[token], Character):
         context = users[token].get_all_stats()
     else:
-        context = False
+        return redirect("/")
     return render_template('character_sheet_editing.html', 
                          context=context,
                          editable=True,
