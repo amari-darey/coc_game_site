@@ -107,18 +107,18 @@
                 <h3 class="skill-category-title">{{ category }}</h3>
                 <div class="skills-grid">
                     {% for skill in skills_list %}
-                    {% set base_value = skill.base if skill.base is number else 0 %}
-                    {% set value = context.skill[skill.id] if context and context.skill and skill.id in context.skill else base_value %}
-                    <div class="skill-item">
-                        <label id="{{ skill.id }}" for="skill-{{ skill.id }}">{{ skill.rus }}</label>
-                        <div class="skill-main-value">
-                            <div class="main-square">{{ value }}</div>
-                            <div class="sub-squares">
-                                <div class="sub-square top">{{ (value / 2)|int }}</div>
-                                <div class="sub-square bottom">{{ (value / 5)|int }}</div>
+                        {% set base_value = skill.base if skill.base is number else 0 %}
+                        {% set value = context.skill[skill.id].value if context and context.skill and skill.id in context.skill else base_value %}
+                        <div class="skill-item">
+                            <label id="{{ skill.id }}" for="skill-{{ skill.id }}">{{ skill.rus }}</label>
+                            <div class="skill-main-value">
+                                <div class="main-square">{{ value }}</div>
+                                <div class="sub-squares">
+                                    <div class="sub-square top">{{ (value / 2)|int }}</div>
+                                    <div class="sub-square bottom">{{ (value / 5)|int }}</div>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     {% endfor %}
                 </div>
             </div>

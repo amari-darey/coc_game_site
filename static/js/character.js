@@ -17,7 +17,7 @@ export class CharacterCreator {
         this.totalPoints = 290;
         this.pointsLeft = this.totalPoints;
         this.currentStats = this._initStats();
-        this.currentSkills = this._initSkills();
+        this.currentSkills = NaN;
 
         // Очки умений
         this.skillPointProfessional = 0;
@@ -50,10 +50,30 @@ export class CharacterCreator {
     }
 
     _initSkills() {
-        return Object.fromEntries(
-            [...document.getElementById("js-stats").querySelectorAll("div")]
-                .map(input => [input.dataset.name.toLowerCase(), parseInt(input.dataset.base)])
-        );
+        const skills = {};
+        document.querySelectorAll('.skill-item input[type="text"]').forEach(txt => {
+            const name = this.createSlug(txt.value);
+            const rus = txt.value;
+            const base = 0;
+            const value = base;
+            if (name) skills[name] = {
+                rus,
+                base,
+                value,
+            };
+        });
+        document.querySelectorAll('#js-stats div').forEach(div => {
+            const name = this.createSlug(div.dataset.name || '');
+            const rus = div.dataset.rus;
+            const base = parseInt(div.dataset.base) || 0;
+            const value = base;
+            if (name) skills[name] = {
+                rus,
+                base,
+                value,
+            };
+        });
+        this.currentSkills = skills
     }
 
     // Бинды
@@ -425,6 +445,7 @@ export class CharacterCreator {
         this._toggleCurrentStep(false);
         this.currentStep++;
         
+        if (this.currentStep === 2) this._initSkills();
         if (this.currentStep === 3) this._updateAgeStats();
         if (this.currentStep === 4) this._calculateStartingStats();
         if (this.currentStep === 4) this._setDodgeAndLangOwn();
@@ -474,7 +495,6 @@ export class CharacterCreator {
 
     // ВАЛИДАЦИЯ
     _validateCurrentStep() {
-        console.log(this.currentStep)
         const currentStepElement = document.querySelector(`.form-step[data-step="${this.currentStep}"]`);
         const requiredInputs = currentStepElement.querySelectorAll("input[required], select[required]");
         
@@ -511,8 +531,9 @@ export class CharacterCreator {
 
     // Вспомогательные
     _calculateStartingStats() {
-        this.currentSkills.dodge = Math.floor(this.currentStats.dex / 2);
-        this.currentSkills.language_own = this.currentStats.edu;
+        console.log(this.currentSkills)
+        this.currentSkills.dodge.base = Math.floor(this.currentStats.dex / 2);
+        this.currentSkills.language_own.base = this.currentStats.edu;
     }
 
     _setDodgeAndLangOwn() {
@@ -523,6 +544,27 @@ export class CharacterCreator {
             dodge.textContent = `Уклонение (${Math.floor(this.currentStats.dex / 2)})`
             languageOwn.textContent = `Языки -Родной- (${this.currentStats.edu})`
         }
+    }
+
+    createSlug(text) {
+        if (!text) return '';
+        
+        const translitMap = {
+            'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo',
+            'ж': 'zh', 'з': 'z', 'и': 'i', 'й': 'y', 'к': 'k', 'л': 'l', 'м': 'm',
+            'н': 'n', 'о': 'o', 'п': 'p', 'р': 'r', 'с': 's', 'т': 't', 'у': 'u',
+            'ф': 'f', 'х': 'h', 'ц': 'ts', 'ч': 'ch', 'ш': 'sh', 'щ': 'sch',
+            'ъ': '', 'ы': 'y', 'ь': '', 'э': 'e', 'ю': 'yu', 'я': 'ya'
+        };
+        
+        return text
+            .trim()
+            .toLowerCase()
+            .replace(/[а-яё]/g, char => translitMap[char] || char)
+            .replace(/\s+/g, '_')
+            .replace(/[^a-z0-9-_]+/g, '')
+            .replace(/-+/g, '-')
+            .replace(/^-|-$/g, '');
     }
 
     // ГЕТЕРЫ

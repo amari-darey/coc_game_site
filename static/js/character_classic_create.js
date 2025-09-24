@@ -107,7 +107,7 @@ class CharacterCreatorClassic extends CharacterCreator {
     }
 
     _resetSkills() {
-        this.currentSkills = this._initSkills();
+        this._initSkills();
         document.querySelectorAll('input[name^="skillsAllocation"]').forEach(input => {
             const base = parseInt(input.dataset.base) || 0;
             input.value = base;
@@ -167,7 +167,6 @@ class CharacterCreatorClassic extends CharacterCreator {
     }
 
     _undoRedirectNextButton() {
-        console.log("_undoRedirectNextButton")
         document.getElementById("nextBtn").removeEventListener("click", this.alternativeNextHandler);
         document.getElementById("nextBtn").addEventListener("click", this.nextStepHandler);
         this.nextStep();
@@ -249,7 +248,7 @@ class CharacterCreatorClassic extends CharacterCreator {
         const input = document.getElementById(`skill_alloc_${skill}`);
         const skillPointsLeftElement = document.getElementById("skillPointsLeft");
         const baseValue = input.minValue || 0;
-        let value = this.currentSkills[skill];
+        let value = this.currentSkills[skill].value;
         const pointsAvailable = this.skillPointProfessional - this.skillPointProfessionalLess;
 
         const operations = {
@@ -276,7 +275,7 @@ class CharacterCreatorClassic extends CharacterCreator {
             operations[action]();
         }
 
-        this.currentSkills[skill] = value;
+        this.currentSkills[skill].value = value;
         input.value = value;
         skillPointsLeftElement.textContent = this.skillPointProfessional - this.skillPointProfessionalLess;
     }

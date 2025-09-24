@@ -106,7 +106,7 @@ class CharacterCreatorFast extends CharacterCreator {
     }
 
     _resetSkills() {
-        this.currentSkills = this._initSkills();
+        this._initSkills();
         this.skillFirstNumFlag = true;
         this.skillSecondNumFlag = true;
         
@@ -244,10 +244,10 @@ class CharacterCreatorFast extends CharacterCreator {
             hiddenInput.value = value;
             const skillKey = hiddenInput.name.match(/\[(.*?)\]/)?.[1];
             if (this.skillFlag) {
-                if (skillKey) this.currentSkills[skillKey] += Math.min(100, parseInt(value, 10));
+                if (skillKey) this.currentSkills[skillKey].value += Math.min(100, parseInt(value, 10));
             }
             else {
-                if (skillKey) this.currentSkills[skillKey] = parseInt(value, 10);
+                if (skillKey) this.currentSkills[skillKey].value = parseInt(value, 10);
             }
         }
 
