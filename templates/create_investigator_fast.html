@@ -62,11 +62,14 @@
 
             <h3 class="section-title full-width">Выберите 8 профессиональных навыков</h3>
 
-            <div class="skills-container full-width">
+            <div class="skills-container full-width" id="skills-container-step-one">
                 {% for category, skills in context.skills.items() %}
                 {% if category not in ['Мифы Ктулху', 'Финансы'] %}
                 <div class="skill-category">
-                    <h3>{{ category }}</h3>
+                    <div class="skill-category-header">
+                        <h3>{{ category }}</h3>
+                        <button type="button" class="skill-add-category-btn" data-category="{{ category }}">+</button>
+                    </div>
                     {% for skill in skills %}
                         <div class="skill-item">
                             <input type="checkbox" id="skill_{{ skill.id }}" name="skills" value="{{ skill.id }} " data-name="{{ skill.rus }}">

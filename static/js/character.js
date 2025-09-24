@@ -61,6 +61,7 @@ export class CharacterCreator {
     _bindEvents() {
         this._bindNavigationEvents();
         this._bindSkillsEvents();
+        this._bindAddSkill();
         this._bindAgeEvents();
         this._bindLuck();
         this._bindFormSubmitEvent();
@@ -107,21 +108,24 @@ export class CharacterCreator {
         document.getElementById("characterForm").addEventListener("submit", event => this._handleSubmit(event));
     }
 
+    _bindAddSkill() {
+        document.getElementById("skills-container-step-one").querySelectorAll(".skill-add-category-btn").forEach(btn => {
+            btn.addEventListener('click', () => this._addNewSkill(btn.closest('.skill-category')))
+        })
+    }
+
     // ШАГ 1
     _toggleSkill(event) {
-        const { checked, value, dataset } = event.target;
-        
+        const { checked, dataset } = event.target;
+        const name = (dataset.name || '').trim();
+        if (!name) { event.target.checked = false; return; }
         if (checked) {
-            if (this.selectedSkills.length >= this.maxSkills) {
-                event.target.checked = false;
-                alert(`Можно выбрать только ${this.maxSkills} навыков`);
-                return;
-            }
-            this.selectedSkills.push(dataset.name);
+            if (this.selectedSkills.includes(name)) { event.target.checked = false; alert('Навык уже существует'); return; }
+            if (this.selectedSkills.length >= this.maxSkills) { event.target.checked = false; alert(`Можно выбрать только ${this.maxSkills} навыков`); return; }
+            if (!this.selectedSkills.includes(name)) this.selectedSkills.push(name);
         } else {
-            this.selectedSkills = this.selectedSkills.filter(skill => skill !== dataset.name);
+            this.selectedSkills = this.selectedSkills.filter(s => s !== name);
         }
-        
         document.getElementById("skillsCounter").textContent = this.selectedSkills.length;
         this._renderSelectedSkills();
     }
@@ -148,6 +152,40 @@ export class CharacterCreator {
                 this._renderSelectedSkills();
             });
         });
+    }
+
+    _addNewSkill(skill_zone) {
+        const item = document.createElement('div'); item.className = 'skill-item';
+
+        const id = 'new_skill_' + Date.now();
+        const chk = Object.assign(document.createElement('input'), { type: 'checkbox', id });
+        const txt = Object.assign(document.createElement('input'), { type: 'text', required: true, placeholder: 'Введите новый навык' });
+        const btn = Object.assign(document.createElement('button'), { type: 'button', className: 'skill-del-category-btn', textContent: '-' });
+        item.append(chk, txt, btn);
+
+        skill_zone.appendChild(item);
+
+        txt.addEventListener('input', () => {
+            const old = chk.dataset.name || '';
+            const n = txt.value.trim();
+            if (old && chk.checked) this.selectedSkills = this.selectedSkills.filter(s => s !== old);
+            chk.dataset.name = n;
+            if (n && chk.checked && !this.selectedSkills.includes(n)) this.selectedSkills.push(n);
+            document.getElementById("skillsCounter").textContent = this.selectedSkills.length;
+            this._renderSelectedSkills();
+        });
+        
+        chk.addEventListener('change', e => { chk.dataset.name = txt.value.trim(); this._toggleSkill(e); });
+        btn.addEventListener('click', () => {
+            if (chk.checked && chk.dataset.name) this.selectedSkills = this.selectedSkills.filter(s => s !== chk.dataset.name);
+            item.remove();
+            document.getElementById("skillsCounter").textContent = this.selectedSkills.length;
+            this._renderSelectedSkills();
+        });
+    }
+
+    _delNewSkill(item) {
+        item.remove()
     }
     
     // ШАГ 3

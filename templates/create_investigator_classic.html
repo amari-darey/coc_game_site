@@ -73,11 +73,14 @@
 
             <h3 class="section-title">Выберите 8 профессиональных навыков</h3>
 
-            <div class="skills-container">
+            <div class="skills-container" id="skills-container-step-one">
                 {% for category, skills in context.skills.items() %}
                 {% if category not in ['Мифы Ктулху', 'Финансы'] %}
                 <div class="skill-category">
-                    <h3>{{ category }}</h3>
+                    <div class="skill-category-header">
+                        <h3>{{ category }}</h3>
+                        <button type="button" class="skill-add-category-btn" data-category="{{ category }}">+</button>
+                    </div>
                     {% for skill in skills %}
                         <div class="skill-item">
                             <input type="checkbox" id="skill_{{ skill.id }}" name="skills" value="{{ skill.id }} " data-name="{{ skill.rus }}">
@@ -91,13 +94,13 @@
         </div>
         <div id="js-characteristic" hidden>
             {% for ch in context.characteristic %}
-                <div data-name="{{ ch.eng }}" data-base="{{ ch.base }}" hidden></div>
+                <div data-name="{{ ch.id }}" data-base="{{ ch.base }}" data-rus="{{ ch.rus }}" hidden></div>
             {% endfor %}
         </div>
         <div id="js-stats" hidden>
             {% for skills in context.skills %}
                 {% for skill in context.skills[skills] %}
-                    <div data-name="{{ skill.id }}" data-base="{{ skill.base }}" hidden></div>
+                    <div data-name="{{ skill.id }}" data-base="{{ skill.base }}" data-rus="{{ skill.rus }}" hidden></div>св
                 {% endfor %}
             {% endfor %}
         </div>

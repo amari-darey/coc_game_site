@@ -206,10 +206,40 @@ select:-webkit-autofill {
 }
 .skill-category h3 {
     color: #8a4b9e;
-    margin-bottom: 15px;
     font-family: 'Cinzel', serif;
+}
+
+.skill-category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
     border-bottom: 1px solid #3a2e66;
     padding-bottom: 10px;
+}
+
+.skill-add-category-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #2a234b, #1a1630);
+    color: #c9a86d;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #3a2e66;
+}
+
+.skill-del-category-btn {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(145deg, #2a234b, #1a1630);
+    color: #c9a86d;
+    font-size: 18px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #3a2e66;
 }
 
 .skill-item { margin-bottom: 12px; display: flex; align-items: center; }
