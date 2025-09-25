@@ -89,7 +89,7 @@
         <div id="js-stats" hidden>
             {% for skills in context.skills %}
                 {% for skill in context.skills[skills] %}
-                    <div data-name="{{ skill.id }}" data-base="{{ skill.base }}" data-rus="{{ skill.rus }}" hidden></div>
+                    <div data-name="{{ skill.id }}" data-base="{{ skill.base }}" data-rus="{{ skill.rus }}" data-category="{{ skills }}" hidden></div>
                 {% endfor %}
             {% endfor %}
         </div>

@@ -100,7 +100,7 @@
         <div id="js-stats" hidden>
             {% for skills in context.skills %}
                 {% for skill in context.skills[skills] %}
-                    <div data-name="{{ skill.id }}" data-base="{{ skill.base }}" data-rus="{{ skill.rus }}" hidden></div>
+                    <div data-name="{{ skill.id }}" data-base="{{ skill.base }}" data-rus="{{ skill.rus }}" data-category="{{ skills }}" hidden></div>
                 {% endfor %}
             {% endfor %}
         </div>
@@ -215,7 +215,7 @@
                             <div class="skill-category-skill">
                                 <h3>{{ category }}</h3>
                                 {% for skill in skills %}
-                                    <div class="skill-item">
+                                    <div class="skill-item" data-default="{{ skill.id }}">
                                         <label for="skill_alloc_{{ skill.id }}">{{ skill.rus }}</label>
                                         <div class="stat-control">
                                             <button type="button" class="stat-btn" data-skill="{{ skill.id }}" data-skill-rus="{{ skill.rus }}" data-action="skillDecrease">-</button>

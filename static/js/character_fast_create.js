@@ -13,7 +13,7 @@ class CharacterCreatorFast extends CharacterCreator {
     _bindEvents() {
         super._bindEvents();
         this._bindDragDelegation();
-        this._bindDropzones();
+        this._bindCharDropzones();
         }
     
     _bindDragDelegation() {
@@ -36,10 +36,12 @@ class CharacterCreatorFast extends CharacterCreator {
         });
     }
 
-    _bindDropzones() {
+    _bindCharDropzones() {
         const charDropzones = document.querySelectorAll("#statTargets .stat-dropzone");
         charDropzones.forEach(zone => this._attachDropzone(zone, false));
+    }
 
+    _bindSkillDropzones() {
         const skillDropzones = document.querySelectorAll("#skill_distribution .stat-dropzone");
         skillDropzones.forEach(zone => this._attachDropzone(zone, true));
     }
@@ -185,6 +187,37 @@ class CharacterCreatorFast extends CharacterCreator {
                 item.querySelectorAll('input,select,textarea,button').forEach(el => el.disabled = true);
             }
         });
+    }
+
+    _renderSkillsStep4() {
+        const container = document.getElementById("skill_distribution");
+
+        Object.entries(this.currentSkills).forEach(([id, skill]) => {
+            let categoryEl = [...container.querySelectorAll('.skill-category-skill')]
+                .find(cat => cat.querySelector('h3').textContent.trim() === skill.category);
+            if (categoryEl) {
+                if (!categoryEl.querySelector(`[data-stat="${id}"]`)) {
+                    const group = document.createElement('div');
+                    group.className = 'stat-group droppable';
+                    group.dataset.stat = id;
+                
+                    group.innerHTML = `
+                        <label data-name="${skill.rus}">${skill.rus} (${skill.base})</label>
+                        <div class="stat-dropzone">Перетащите сюда</div>
+                        <input type="hidden" name="skill[${id}]" value="">
+                    `;
+                
+                    categoryEl.appendChild(group);
+                }
+            }
+        });
+    }
+
+    // Навигация
+
+    nextStep() {
+        super.nextStep()
+        if (this.currentStep === 4) this._bindSkillDropzones();
     }
 
     // ПУЛ

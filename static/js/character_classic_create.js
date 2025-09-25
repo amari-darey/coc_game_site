@@ -9,7 +9,6 @@ class CharacterCreatorClassic extends CharacterCreator {
     _bindEvents() {
         super._bindEvents();
         this._bindStatsEvents();
-        this._bindStepFourEvents();
     }
 
     _bindStatsEvents() {
@@ -248,6 +247,9 @@ class CharacterCreatorClassic extends CharacterCreator {
         const input = document.getElementById(`skill_alloc_${skill}`);
         const skillPointsLeftElement = document.getElementById("skillPointsLeft");
         const baseValue = input.minValue || 0;
+        console.log(this.currentSkills)
+        console.log(skill)
+        console.log(this.currentSkills[skill].value)
         let value = this.currentSkills[skill].value;
         const pointsAvailable = this.skillPointProfessional - this.skillPointProfessionalLess;
 
@@ -278,6 +280,40 @@ class CharacterCreatorClassic extends CharacterCreator {
         this.currentSkills[skill].value = value;
         input.value = value;
         skillPointsLeftElement.textContent = this.skillPointProfessional - this.skillPointProfessionalLess;
+    }
+
+    _renderSkillsStep4() {
+        const container = document.getElementById("skill_distribution");
+
+        Object.entries(this.currentSkills).forEach(([id, skill]) => {
+            let categoryEl = [...container.querySelectorAll('.skill-category-skill')]
+                .find(cat => cat.querySelector('h3').textContent.trim() === skill.category);
+            if (categoryEl) {
+                if (!categoryEl.querySelector(`[data-default="${id}"]`)) {
+                    const group = document.createElement('div');
+                    group.className = 'skill-item';
+                
+                    group.innerHTML = `
+                        <label for="skill_alloc_${id}">${skill.rus}</label>
+                        <div class="stat-control">
+                            <button type="button" class="stat-btn" data-skill="${id}" data-skill-rus="${skill.rus}" data-action="skillDecrease">-</button>
+                            <input type="number" id="skill_alloc_${id}" name="skillsAllocation[${id}]" 
+                            data-base="${skill.base}" value="${skill.base}" min="0" max="100" readonly>
+                            <button type="button" class="stat-btn" data-skill="${id}" data-skill-rus="${skill.rus}" data-action="skillIncrease">+</button>
+                            <button type="button" class="stat-btn" data-skill="${id}" data-skill-rus="${skill.rus}" data-action="skillIncrease+">+10</button>
+                        </div>
+                    `;
+                    categoryEl.appendChild(group);
+                }
+            }
+        });
+    }
+
+    // Навигация
+
+    nextStep() {
+        super.nextStep()
+        if (this.currentStep === 4) this._bindStepFourEvents();
     }
 
     // Валидация

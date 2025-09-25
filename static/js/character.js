@@ -56,10 +56,12 @@ export class CharacterCreator {
             const rus = txt.value;
             const base = 0;
             const value = base;
+            const category = txt.dataset.category;
             if (name) skills[name] = {
                 rus,
                 base,
                 value,
+                category
             };
         });
         document.querySelectorAll('#js-stats div').forEach(div => {
@@ -67,10 +69,12 @@ export class CharacterCreator {
             const rus = div.dataset.rus;
             const base = parseInt(div.dataset.base) || 0;
             const value = base;
+            const category = div.dataset.category;
             if (name) skills[name] = {
                 rus,
                 base,
                 value,
+                category
             };
         });
         this.currentSkills = skills
@@ -175,12 +179,14 @@ export class CharacterCreator {
     }
 
     _addNewSkill(skill_zone) {
-        const item = document.createElement('div'); item.className = 'skill-item';
+        const item = document.createElement('div'); 
+        item.className = 'skill-item';
 
         const id = 'new_skill_' + Date.now();
         const chk = Object.assign(document.createElement('input'), { type: 'checkbox', id });
-        const txt = Object.assign(document.createElement('input'), { type: 'text', required: true, placeholder: 'Введите новый навык' });
+        const txt = Object.assign(document.createElement('input'), {type: 'text', required: true, placeholder: 'Введите новый навык' });
         const btn = Object.assign(document.createElement('button'), { type: 'button', className: 'skill-del-category-btn', textContent: '-' });
+        txt.dataset.category = skill_zone.querySelector('.skill-add-category-btn').dataset.category;
         item.append(chk, txt, btn);
 
         skill_zone.appendChild(item);
@@ -449,6 +455,7 @@ export class CharacterCreator {
         if (this.currentStep === 3) this._updateAgeStats();
         if (this.currentStep === 4) this._calculateStartingStats();
         if (this.currentStep === 4) this._setDodgeAndLangOwn();
+        if (this.currentStep === 4) this._renderSkillsStep4();
         if (this.currentStep === 4) this._handleStepFour();
         if (this.currentStep === 5) this._handleStepFive();
         
@@ -531,7 +538,6 @@ export class CharacterCreator {
 
     // Вспомогательные
     _calculateStartingStats() {
-        console.log(this.currentSkills)
         this.currentSkills.dodge.base = Math.floor(this.currentStats.dex / 2);
         this.currentSkills.language_own.base = this.currentStats.edu;
     }
