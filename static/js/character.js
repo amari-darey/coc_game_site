@@ -540,6 +540,8 @@ export class CharacterCreator {
     _calculateStartingStats() {
         this.currentSkills.dodge.base = Math.floor(this.currentStats.dex / 2);
         this.currentSkills.language_own.base = this.currentStats.edu;
+        this.currentSkills.dodge.value = this.currentSkills.dodge.base
+        this.currentSkills.language_own.value = this.currentSkills.language_own.base
     }
 
     _setDodgeAndLangOwn() {

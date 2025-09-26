@@ -246,9 +246,21 @@ document.addEventListener('DOMContentLoaded', function() {
             const label = item.querySelector('label');
             const valueElement = item.querySelector('.main-square');
             if (label && valueElement) {
-                const skillName = label.id;
+                const skillId = label.id;
+                const skillName = label.textContent.trim();
+                const categoryElement = item.closest('.skill-category');
+                const categoryName = categoryElement
+                    ? categoryElement.querySelector('.skill-category-title').textContent.trim()
+                    : '';
+            
                 const value = parseInt(valueElement.textContent) || 0;
-                skills[skillName] = value;
+            
+                skills[skillId] = {
+                    rus: skillName,
+                    value: value,
+                    base: 0,              // Cделать data атрибут
+                    category: categoryName
+                };
             }
         });
 
