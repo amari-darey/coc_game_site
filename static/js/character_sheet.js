@@ -368,6 +368,7 @@ document.addEventListener('DOMContentLoaded', function() {
     makeEditable('.text-content#character-appearance', true);
     makeEditable('.text-content#character-backstory', true);
     makeEditable('.text-content#character-equipment', true);
+    makeEditable(".weapon-value")
 
     addListenerToCell();
 });
