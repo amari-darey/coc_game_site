@@ -158,6 +158,29 @@ header{padding:30px 0;text-align:center;position:relative}
 .main-button:hover::before{left:100%}
 .main-button:active{transform:translateY(0);box-shadow:0 5px 15px rgba(0,0,0,0.5)}
 
+.three-quarters-width {width: 75%;}
+
+.dropzone {
+    background: rgba(26, 22, 48, 0.5);
+    border: 2px dashed #3a2e66;
+    border-radius: 10px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b6880;
+    font-size: 1rem;
+    margin-top: 10px;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.dropzone.dragover {
+    border-color: #8a4b9e;
+    background: rgba(138, 75, 158, 0.2);
+    color: #c9a86d;
+    box-shadow: 0 0 10px rgba(138, 75, 158, 0.5);
+}
+
 footer{text-align:center;padding:30px 0;font-size:.9rem;color:#6b6880}
 
 .tentacles-container{

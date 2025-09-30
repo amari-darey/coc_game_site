@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const addWeaponBtn = document.getElementById('add-weapon-btn');
     document.getElementById('return-to-main').addEventListener("click", () => window.location.href = "/")
-    document.getElementById('save-character').addEventListener('click', collectCharacterData);
+    document.getElementById('save-character').addEventListener('click', characterSave);
+    document.getElementById('save-json').addEventListener('click', saveJson);
 
     if (addWeaponBtn) {
         addWeaponBtn.addEventListener('click', addWeapon);
@@ -227,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    async function collectCharacterData() {
+    function collectCharacterData() {
         const name = document.getElementById('character-name').textContent;
         const proffesion = document.getElementById('character-proffesion').textContent;
         const age = document.getElementById('character-age').textContent || 0;
@@ -324,7 +325,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
         });
 
-        const result = {
+        const result =  {
             name,
             age,
             proffesion,
@@ -343,7 +344,34 @@ document.addEventListener('DOMContentLoaded', function() {
             equipment,
             weapons
         };
+        return result
+    }
 
+    function getFormattedDate() {
+      const now = new Date();
+      const day = String(now.getDate()).padStart(2, '0');
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const year = now.getFullYear();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+        
+      return `${hours}-${minutes}--${day}-${month}-${year}`;
+    }
+
+    function saveJson() {
+        char = collectCharacterData();
+        console.log(char)
+        const blob = new Blob([JSON.stringify(char, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `${char.name}-${getFormattedDate()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }    
+
+    async function characterSave() {
+        result = collectCharacterData();
         try {
             const response = await fetch('http://127.0.0.1:5100/character-save', {
                 method: 'POST',

@@ -8,6 +8,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalOverlay = document.getElementById('modalOverlay');
     const closeModalBtn = document.getElementById('closeModal');
 
+    const dropzone = document.getElementById("mainDropZone");
+    dropzone.addEventListener("drop", dropEvent)
+
+    dropzone.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        dropzone.classList.add("dragover");
+    });
+
+    dropzone.addEventListener("dragleave", () => {
+        dropzone.classList.remove("dragover");
+    });
+
+    
+
     if (createButton) createButton.addEventListener('click', openModal);
     if (closeModalBtn) closeModalBtn.addEventListener('click', closeModalHandler);
     if (modalOverlay) modalOverlay.addEventListener('click', e => {
@@ -146,6 +160,42 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('beforeunload', () => {
         clearInterval(bubbleTimer);
     });
+
+    async function dropEvent(e) {
+        e.preventDefault();
+        dropzone.style.border = "2px dashed #ccc";
+        dropzone.style.background = "";
+
+        const file = e.dataTransfer.files[0];
+        if (file && file.type === "application/json") {
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                try {
+                    const jsonData = JSON.parse(event.target.result);
+                    try {
+                        const response = await fetch('http://127.0.0.1:5100/character-save', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(jsonData)
+                        });
+                    
+                        if (response.ok) {
+                            window.location.href = '/';
+                        } else {
+                            console.error('Ошибка сервера:', response.status);
+                        }
+                    } catch (error) {
+                        console.error('Ошибка отправки:', error);
+                    }
+                } catch (err) {
+                    console.error("Ошибка при разборе JSON:", err);
+                }
+            };
+            reader.readAsText(file);
+        } else {
+            alert("Пожалуйста, загрузите .json файл");
+        }
+    }
 });
-
-
