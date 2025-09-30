@@ -163,9 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function dropEvent(e) {
         e.preventDefault();
-        dropzone.style.border = "2px dashed #ccc";
-        dropzone.style.background = "";
-
         const file = e.dataTransfer.files[0];
         if (file && file.type === "application/json") {
             const reader = new FileReader();
@@ -195,6 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             reader.readAsText(file);
         } else {
+            dropzone.classList.remove("dragover");
             alert("Пожалуйста, загрузите .json файл");
         }
     }
