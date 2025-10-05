@@ -60,14 +60,6 @@ class CharacterCreatorClassic extends CharacterCreator {
     _updatePointsDisplay() {
         const pointsElement = document.getElementById("pointsLeft");
         pointsElement.textContent = this.pointsLeft;
-        
-        if (this.pointsLeft === 0) {
-            pointsElement.style.color = "#4CAF50";
-        } else if (this.pointsLeft < 0) {
-            pointsElement.style.color = "#ff6b6b";
-        } else {
-            pointsElement.style.color = "#c9a86d";
-        }
     }
 
     _updateStatButtons() {

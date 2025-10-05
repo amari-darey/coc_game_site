@@ -20,8 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
         dropzone.classList.remove("dragover");
     });
 
-    
-
     if (createButton) createButton.addEventListener('click', openModal);
     if (closeModalBtn) closeModalBtn.addEventListener('click', closeModalHandler);
     if (modalOverlay) modalOverlay.addEventListener('click', e => {

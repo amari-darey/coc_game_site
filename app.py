@@ -90,5 +90,20 @@ def character_save():
     return redirect("/")
 
 
+@app.route("/game")
+def game():
+    token = request.cookies.get("auth_token")
+
+    if not token or token not in users: return redirect("/")
+    if isinstance(users[token], Character):
+        context = users[token].get_all_stats()
+    else:
+        return redirect("/")
+    return render_template("game.html", context=context,
+                         editable=False,
+                         SKILLS=SKILLS,
+                         CHARACTERISTICS=CHARACTERISTICS)
+
+
 if __name__ == "__main__":
     socketio.run(app, host="0.0.0.0", port=5100, use_reloader=False, log_output=True)

@@ -203,14 +203,18 @@
                             <div class="weapon-value" id="{{ weapon.id }}-weapon-misfire">{{ weapon.misfire }}</div>
                         </div>
                     </div>
-                    <button class="weapon-delete-btn" data-weapon-id="{{ weapon.id }}">×</button>
+                    {% if editable %}
+                        <button class="weapon-delete-btn" data-weapon-id="{{ weapon.id }}">×</button>
+                    {% endif %}
                 </div>
                 {% endfor %}
             {% else %}
                 <div class="no-weapons">Оружие не добавлено</div>
             {% endif %}
         </div>
-        <button class="add-weapon-btn" id="add-weapon-btn">
-            <span>+</span> Добавить оружие
-        </button>
+        {% if editable %}
+            <button class="add-weapon-btn" id="add-weapon-btn">
+                <span>+</span> Добавить оружие
+            </button>
+        {% endif %}
     </div>
